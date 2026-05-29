@@ -1,6 +1,6 @@
 # Psammite Virtual Machine
 ## A simple 64-bit VM written in C.
-Psammite is currently a work in progress.
+Psammite is currently a work in progress. Check the **[Developer Log](DEVLOG.md)**
 ### Specification:
 * Architecture: 64-bit word size, little endian.
 * Instruction width: fixed 32-bit instructions.

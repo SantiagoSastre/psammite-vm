@@ -1,6 +1,6 @@
 # Psammite Devlog
 
-## [28/4/26] -- Foundation
+## [28/4/26]  Foundation
 A long time itch of mine is building a simple virtual machine. Computers have always fascinated me, not in an abstract way, I'm deeply drawn to the way they work, and in a journey to understand them better I will try my hand at making my very own VM. My main goals are:
 * Coding a modern, fully capable VM using the least abstractions as possible.
 * To do it on my own. it is ok to read and ask, but not to blindly follow tutorials.
@@ -10,4 +10,5 @@ I will develop the project on my spare time, and will do three different stages:
 * Working VM
 * Assembler
 * A simple programming language native to Psammite
-If you happen to stumble upon my project, Hi!!! and I hope you come back to see the development of Psammite.
+If you happen to stumble upon my project, Hi!!!
+I hope you come back to see the development of Psammite!
