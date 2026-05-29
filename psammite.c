@@ -16,11 +16,11 @@ typedef struct {
   uint64_t registers[NUM_REGISTER];
   FRegister f_registers[NUM_REGISTER];
   uint8_t memory[VM_MEM_SIZE];
-} VM;
+} PsammiteVM;
 
 
 
-int vm_reset(VM *vm) {
+int psammite_reset(PsammiteVM *vm) {
   vm->pc = 0;
   memset(vm->registers, 0, sizeof(vm->registers));
   memset(vm->f_registers,0,sizeof(vm->f_registers));
@@ -28,15 +28,15 @@ int vm_reset(VM *vm) {
   return 0;
 }
 
-int vm_init(VM *vm) {
-  if (vm_reset(vm)!= 0 ) {
+int psammite_init(PsammiteVM *vm) {
+  if (psammite_reset(vm)!= 0 ) {
     return 1;
   }
   return 0;
   
 }
 
-int vm_load_program(VM *vm, uint32_t *program, size_t program_size){
+int psammite_load_program(PsammiteVM *vm, uint32_t *program, size_t program_size){
   if (program_size > VM_MEM_SIZE) {
     fprintf(stderr, "FATAL ERROR: Program too large for VM memory.");
     return 1;
