@@ -36,7 +36,7 @@ int psammite_init(PsammiteVM *vm) {
   
 }
 
-int psammite_load_program(PsammiteVM *vm, uint32_t *program, size_t program_size){
+int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size){
   if (program_size > VM_MEM_SIZE) {
     fprintf(stderr, "FATAL ERROR: Program too large for VM memory.");
     return 1;
