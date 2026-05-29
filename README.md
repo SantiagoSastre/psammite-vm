@@ -1,6 +1,6 @@
-#Psammite Virtual Machine
+# Psammite Virtual Machine
 ## A simple 64-bit VM written in C.
-###Specification:
+### Specification:
 * Architecture: 64-bit word size, little endian.
 * Instruction width: fixed 32-bit instructions.
 * Memory: 64 KB, byte-addressable.
