@@ -74,10 +74,10 @@ This layout will be used to perform immediate operations and register loading. L
 As the EXECUTE opcode has capability for many functions as an R-type instruction, here are the first I will implement:
 
 Under the 4-bit category `0001` is going to be integer math. Inside of it we will have the following basic instructions, identified by the 7-bit function field:
-* IADD
-* ISUB
-* IMUL
-* IDIV
+* ADD
+* SUB
+* MUL
+* DIV
 * MOD
 
 The 4-bit category `0000` is for syscalls, and inside its 7-bit function field:
