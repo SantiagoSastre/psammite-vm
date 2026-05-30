@@ -1,7 +1,7 @@
 # Psammite Virtual Machine
 ## A simple 64-bit VM written in C.
 Psammite is currently a work in progress. Check the **[Developer Log](DEVLOG.md)**
-### Specification:
+### Specification
 * Architecture: 64-bit word size, little endian.
 * Instruction width: fixed 32-bit instructions.
 * Memory: 64 KB, byte-addressable.
@@ -15,3 +15,6 @@ Psammite is currently a work in progress. Check the **[Developer Log](DEVLOG.md)
   * R3/LR: Link Register (holds the return address).
   * R4-R31: general purpose registers.
 * Floating-point registers: 32x64-bit registers (FR0-FR31).
+
+
+#### Instruction Set Architecture

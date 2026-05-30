@@ -45,6 +45,12 @@ int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size)
   return 0;
 }
 
+
+int psammite_run(PsammiteVM *vm) {
+  
+}
+
+
 int main() {
   return 0;
 }
