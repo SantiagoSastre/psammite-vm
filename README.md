@@ -7,7 +7,9 @@ Psammite uses CMake for its build system.
 
 1. Generate the build files: `cmake -S . -B build`
 2. Compile the VM: `cmake --build build`
-3. Run the VM: `./run.sh` in Linux or `./build/bin/psammite_vm.exe` in Windows.
+3. Run the VM:
+  * Linux/MacOS: `./run.sh`
+  * Windows: `.\build\bin\Debug\psammite_vm.exe` if using MSVC, otherwise `.\build\bin\psammite_vm.exe`
 
 ### Specification
 * Architecture: 64-bit word size, little endian.
