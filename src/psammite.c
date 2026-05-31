@@ -25,6 +25,9 @@ int psammite_reset(PsammiteVM *vm) {
   memset(vm->registers, 0, sizeof(vm->registers));
   memset(vm->f_registers,0,sizeof(vm->f_registers));
   memset(vm->memory, 0, sizeof(vm->memory));
+
+  
+  
   return 0;
 }
 
@@ -48,6 +51,7 @@ int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size)
 
 int psammite_run(PsammiteVM *vm) {
   
+  return 0;
 }
 
 

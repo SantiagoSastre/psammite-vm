@@ -1,6 +1,14 @@
 # Psammite Virtual Machine
 ## A simple 64-bit VM written in C.
 Psammite is currently a work in progress. Check the **[Developer Log](DEVLOG.md)**
+
+## How to Build and Run
+Psammite uses CMake for its build system. 
+
+1. Generate the build files: `cmake -S . -B build`
+2. Compile the VM: `cmake --build build`
+3. Run the VM: `./run.sh` in Linux or `./build/bin/psammite_vm.exe` in Windows.
+
 ### Specification
 * Architecture: 64-bit word size, little endian.
 * Instruction width: fixed 32-bit instructions.
