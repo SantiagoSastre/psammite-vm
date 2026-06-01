@@ -150,19 +150,20 @@ void psammite_dump(PsammiteVM *vm) {
     char reg_name[4];
     switch (i) {
       case ZR:
-        strcpy(reg_name, "ZR");
+        snprintf(reg_name,sizeof(reg_name), "ZR");
         break;
       case SP:
-        strcpy(reg_name, "SP");
+        snprintf(reg_name,sizeof(reg_name), "SP");
         break;
       case BP:
-        strcpy(reg_name, "BP");
+        snprintf(reg_name,sizeof(reg_name), "BP");
         break;
       case LR:
-        strcpy(reg_name, "LR");
+        snprintf(reg_name,sizeof(reg_name), "LR");
         break;
       default:
         snprintf(reg_name, sizeof(reg_name), "R%02d", i);
+        break;
     }
     printf("%-4s: 0x%016" PRIX64 "    |    ",reg_name , vm->registers[i] );
   }
