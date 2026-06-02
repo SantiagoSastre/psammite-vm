@@ -3,6 +3,7 @@
 
 int psammite_reset(PsammiteVM *vm) {
   vm->pc = 0;
+  vm->ir = 0;
   memset(vm->registers, 0, sizeof(vm->registers));
   memset(vm->f_registers,0,sizeof(vm->f_registers));
   memset(vm->memory, 0, sizeof(vm->memory));
