@@ -1,1 +1,1 @@
-./build/bin/psammite_vm "$@"
+./build/psammite_vm "$@"

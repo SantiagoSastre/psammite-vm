@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "psammite.h"
 
 int main() {

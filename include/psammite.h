@@ -2,11 +2,8 @@
 #define PSAMMITE_HEADER
 
 
-#include <stdio.h>
-#include <string.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include <inttypes.h>
+#include <stddef.h>
 
 #define NUM_REGISTER 32
 #define VM_MEM_SIZE 65536

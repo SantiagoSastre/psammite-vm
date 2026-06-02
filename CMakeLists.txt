@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 project(psammite-vm VERSION 0.1.0 LANGUAGES C)
 
+enable_testing()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -30,3 +29,6 @@ target_include_directories(psammite_vm_lib PUBLIC include)
 target_link_libraries(psammite_vm_lib PRIVATE psammite_compiler_config)
 add_executable(psammite_vm  src/main.c)
 target_link_libraries(psammite_vm PRIVATE psammite_compiler_config psammite_vm_lib)
+add_executable(psammite_vm_test tests/test.c)
+target_link_libraries(psammite_vm_test PRIVATE psammite_vm_lib psammite_compiler_config)
+add_test(NAME psammite_tests COMMAND psammite_vm_test)
