@@ -11,7 +11,7 @@ Psammite uses CMake for its build system.
     * Linux/MacOS: `./run.sh`
     * Windows: `.\build\bin\Debug\psammite_vm.exe` if using MSVC, otherwise `.\build\bin\psammite_vm.exe`
 
-### Specification
+## Specification
 * Architecture: 64-bit word size, little endian.
 * Instruction width: fixed 32-bit instructions.
 * Memory: 64 KB, byte-addressable.
@@ -27,4 +27,4 @@ Psammite uses CMake for its build system.
 * Floating-point registers: 32x64-bit registers (FR0-FR31).
 
 
-#### Instruction Set Architecture
+### Instruction Set Architecture
