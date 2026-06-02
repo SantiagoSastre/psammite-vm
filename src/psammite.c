@@ -1,3 +1,5 @@
+#include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -52,7 +54,7 @@ int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size)
 
 void psammite_dump(PsammiteVM *vm) {
   printf("---------------------------Psammite VM------------------------------------------------------------------------------------------\n");
-  printf("IR: 0x%08X              |    PC: 0x%016" PRIX64 "\n",vm->ir, vm->pc);
+  printf("IR  : 0x%08X            |    PC  : 0x%016" PRIX64 "                                                                      |\n",vm->ir, vm->pc);
   printf("-----------------------Integer Registers----------------------------------------------------------------------------------------\n");
   for(Register i = ZR; i<NUM_REGISTER; i++) {
     if (i%4==0 && i!=ZR) {
@@ -91,6 +93,33 @@ void psammite_dump(PsammiteVM *vm) {
     printf("%-4s: %018.6lf    |    ",reg_name , vm->f_registers[i].as_float );
   }
   printf("\n");
+  printf("-----------------------PC(0x%016" PRIX64 ")-----------------------------------------------------------------------------------\n",vm->pc);
+  uint64_t aligned_pc = vm->pc & (~((uint64_t)0x0F));
+  uint64_t start_address, end_address;
+  if(aligned_pc < 16){
+    start_address = 0;
+  } else {
+    start_address = aligned_pc-16;
+  }
+  end_address = start_address+48;
+  if (end_address > VM_MEM_SIZE) {
+    end_address = VM_MEM_SIZE;
+    start_address = end_address - 48;
+    if (end_address < 48) {
+      start_address = 0;
+    }
+  }
+  for(uint64_t i = start_address; i<end_address;i++) {
+    if(i%16==0){
+      if(i!=start_address) {
+        printf("                                        |\n");
+      }
+      printf("0x%016" PRIX64 "  |  " , i );
+    }
+    printf("%02X  ",vm->memory[i]);
+  }
+  printf("                                        |");
+  printf("\n--------------------------------------------------------------------------------------------------------------------------------\n");
 }
 
 //int psammite_run(PsammiteVM *vm) {
