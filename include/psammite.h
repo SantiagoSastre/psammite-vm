@@ -1,9 +1,11 @@
 #ifndef PSAMMITE_HEADER
 #define PSAMMITE_HEADER
 
-
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
+#include "endian.h"
 
 #define NUM_REGISTER 32
 #define VM_MEM_SIZE 65536
@@ -140,5 +142,136 @@ int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size)
 void psammite_dump(PsammiteVM *vm);
 InternalExitCodes psammite_step(PsammiteVM *vm);
 int psammite_run(PsammiteVM *vm);
+
+static inline void psammite_write_register(PsammiteVM *vm, uint8_t reg, uint64_t value) {
+  vm->registers[reg] = value;
+  vm->registers[ZR] = 0; //Hard-wiring ZR to zero
+}
+
+
+static inline int psammite_fetch_to_ir(PsammiteVM *vm) {
+  if (vm->pc+4>VM_MEM_SIZE) {
+    return 1;
+  }
+  memcpy(&vm->ir,&vm->memory[vm->pc],sizeof(uint8_t)*4);
+  vm->ir = VM_TO_HOST32(vm->ir);
+  vm->pc = vm->pc + 4;
+  return 0;
+}
+
+static inline uint8_t psammite_decode_opcode(uint32_t instruction) {
+  uint8_t opcode = (instruction>>26) & 0x3F;
+  return opcode;
+}
+
+static inline uint8_t psammite_decode_func4(uint32_t instruction) {
+  uint8_t func4 = (instruction>>7) & 0xF;
+  return func4;
+}
+
+static inline uint8_t psammite_decode_func7(uint32_t instruction) {
+  uint8_t func7 = instruction & 0x7F;
+  return func7;
+}
+
+static inline uint8_t psammite_decode_rs1(uint32_t instruction) {
+  uint8_t rs1 = (instruction>>21) & 0x1F;
+  return rs1;
+}
+
+static inline uint8_t psammite_decode_rs2(uint32_t instruction) {
+  uint8_t rs2 = (instruction>>16) & 0x1F;
+  return rs2;
+}
+
+static inline uint8_t psammite_decode_rd(uint32_t instruction) {
+  uint8_t rd = (instruction>>11) & 0x1F;
+  return rd;
+}
+
+//No other arguments for now to prevent compiler errors with strict flags, will add as more system opcodes use more elements
+static inline InternalExitCodes psammite_system_execute(uint8_t func7) {
+  switch (func7) {
+    case HALT:
+      return VM_HALT;
+    case NOP:
+      return VM_OK;
+    default:
+      fprintf(stderr, "Unrecognized Function 7 parameter in Execute System instruction, halting.");
+      return VM_ERR_GENERIC;
+  }
+}
+
+static inline InternalExitCodes psammite_imath_execute(PsammiteVM *vm, uint8_t func7, uint8_t rs1, uint8_t rs2, uint8_t rd) {
+  switch (func7) {
+    case ADD:
+      psammite_write_register(vm, rd,  vm->registers[rs1] + vm->registers[rs2]);
+      return VM_OK;
+    case SUB:
+      psammite_write_register(vm, rd, vm->registers[rs1] - vm->registers[rs2]);
+      return VM_OK;
+    case MUL:
+      psammite_write_register(vm, rd,  vm->registers[rs1] * vm->registers[rs2]);
+      return VM_OK;
+    case DIV:
+      if (vm->registers[rs2]==0){
+        psammite_write_register(vm,rd,0xFFFFFFFFFFFFFFFF);
+      } else {
+      psammite_write_register(vm, rd, vm->registers[rs1] / vm->registers[rs2]);
+      }
+      return VM_OK;
+    case MOD:
+      if (vm->registers[rs2]==0){
+        psammite_write_register(vm, rd, vm->registers[rs1]);
+      } else {
+      psammite_write_register(vm, rd, vm->registers[rs1] % vm->registers[rs2]);
+      }
+      return VM_OK;
+    case SDIV:
+      if (vm->registers[rs2]==0){
+        psammite_write_register(vm,rd,0xFFFFFFFFFFFFFFFF);
+      }
+      else if ((int64_t)vm->registers[rs1]==INT64_MIN && (int64_t)vm->registers[rs2]==-1) {
+        psammite_write_register(vm, rd, INT64_MAX);
+      }
+      else {
+      psammite_write_register(vm, rd,(int64_t)vm->registers[rs1] / (int64_t)vm->registers[rs2]);
+      }
+      return VM_OK;
+    case SMOD:
+      if (vm->registers[rs2]==0){
+        psammite_write_register(vm, rd, vm->registers[rs1]);
+      }
+      else if ((int64_t)vm->registers[rs1]==INT64_MIN && (int64_t)vm->registers[rs2]==-1) {
+        psammite_write_register(vm, rd, 0);
+      }
+      else {
+      psammite_write_register(vm, rd, (int64_t)vm->registers[rs1] % (int64_t)vm->registers[rs2]);
+      }
+      return VM_OK;
+    default:
+      fprintf(stderr, "Unrecognized Function 7 parameter in Execute IMath instruction, halting.");
+      return VM_ERR_GENERIC;
+  
+  }
+}
+
+static inline InternalExitCodes psammite_route_execute(PsammiteVM *vm, uint32_t instruction) {
+  uint8_t func4 = psammite_decode_func4(instruction);
+  uint8_t func7 = psammite_decode_func7(instruction);
+  uint8_t rs1 = psammite_decode_rs1(instruction);
+  uint8_t rs2 = psammite_decode_rs2(instruction);
+  uint8_t rd = psammite_decode_rd(instruction);
+  switch (func4) {
+    case SYSTEM:
+      return psammite_system_execute(func7);
+    case IMATH:
+      return psammite_imath_execute(vm, func7, rs1, rs2, rd);
+    default:
+      fprintf(stderr, "Unrecognized Function 4 parameter in Execute instruction, halting.");
+      return VM_ERR_GENERIC;
+  }
+}
+
 
 #endif
