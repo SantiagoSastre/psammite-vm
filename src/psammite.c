@@ -5,6 +5,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include "psammite.h"
+#include "endian.h"
 
 
 int psammite_reset(PsammiteVM *vm) {
@@ -123,8 +124,15 @@ void psammite_dump(PsammiteVM *vm) {
 }
 
 
-int psammite_step(PsammiteVM *vm) {
+void psammite_fetch_to_ir(PsammiteVM *vm) {
   memcpy(&vm->ir,&vm->memory[vm->pc],sizeof(uint8_t)*4);
+  vm->ir = VM_TO_HOST32(vm->ir);
+  vm->pc = vm->pc + 4;
+  
+}
+
+int psammite_step(PsammiteVM *vm) {
+  psammite_fetch_to_ir(vm);
   return 0;
 }
 

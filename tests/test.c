@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "psammite.h"
+#include "endian.h"
 
 #define VM_ASSERT(condition)                                                   \
 do {                                                                           \
@@ -20,7 +21,21 @@ void test_vm_initialization() {
   psammite_free(vm);
 }
 
+
+void test_vm_endianness() {
+  PsammiteVM* vm = psammite_new();
+  vm->memory[0] = 0xDD;
+  vm->memory[1] = 0xCC;
+  vm->memory[2] = 0xBB;
+  vm->memory[3] = 0xAA;
+  psammite_fetch_to_ir(vm);
+  VM_ASSERT(vm->ir==0xAABBCCDD);
+  psammite_free(vm);
+  
+}
+
 int main() {
   test_vm_initialization();
+  test_vm_endianness();
   return 0;
 }

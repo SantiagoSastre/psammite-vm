@@ -26,7 +26,7 @@ Windows: `.\build\Debug\psammite_vm.exe` if using MSVC, otherwise `.\build\psamm
 
 ### Advanced
 
-#### Single-config (Linux/Makefiles/Ninja):
+#### Single-config (Makefiles/Ninja):
 
 Pass the `-DCMAKE_BUILD_TYPE` flag during the generation step to change the build profile. Valid options are `Debug`, `Release`, `RelWithDebInfo`, or `MinSizeRel`.
 
@@ -51,7 +51,7 @@ cmake --build build --config Release
 
 ### Supported Compilers
 
-Only Clang, GCC, and MSVC are supported when compiling the project due to the use of compiler instrinsics to allow portability to big endian host architectures.
+Only Clang, GCC, and MSVC are supported when compiling the project due to the use of compiler intrinsics to allow portability to big endian host architectures.
 
 ## Specification
 * Architecture: 64-bit word size, little endian.
