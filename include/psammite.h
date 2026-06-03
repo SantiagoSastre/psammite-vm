@@ -107,8 +107,16 @@ typedef enum {
   MUL = 0x02,
   DIV = 0x03,
   MOD = 0x04,
+  SDIV = 0x05,
+  SMOD = 0x06
 } IMathCodes;
 
+
+typedef enum {
+  VM_OK = 0,
+  VM_ERR_GENERIC = 1,
+  VM_HALT = 2
+} InternalExitCodes;
 
 typedef union {
   uint64_t bits;
@@ -130,8 +138,7 @@ PsammiteVM* psammite_new();
 void psammite_free(PsammiteVM *vm);
 int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size);
 void psammite_dump(PsammiteVM *vm);
-void psammite_fetch_to_ir(PsammiteVM *vm);
-int psammite_step(PsammiteVM *vm);
+InternalExitCodes psammite_step(PsammiteVM *vm);
 int psammite_run(PsammiteVM *vm);
 
 #endif

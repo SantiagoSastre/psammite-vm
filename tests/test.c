@@ -28,7 +28,8 @@ void test_vm_endianness() {
   vm->memory[1] = 0xCC;
   vm->memory[2] = 0xBB;
   vm->memory[3] = 0xAA;
-  psammite_fetch_to_ir(vm);
+  int status = psammite_fetch_to_ir(vm);
+  VM_ASSERT(status==0);
   VM_ASSERT(vm->ir==0xAABBCCDD);
   psammite_free(vm);
   
