@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "psammite.h"
-#include "endian.h"
+
 
 #define VM_ASSERT(condition)                                                   \
 do {                                                                           \
@@ -28,8 +28,8 @@ void test_vm_endianness() {
   vm->memory[1] = 0xCC;
   vm->memory[2] = 0xBB;
   vm->memory[3] = 0xAA;
-  int status = psammite_fetch_to_ir(vm);
-  VM_ASSERT(status==0);
+  InternalExitCodes status = psammite_step(vm);
+  VM_ASSERT(status==VM_OK);
   VM_ASSERT(vm->ir==0xAABBCCDD);
   psammite_free(vm);
   
