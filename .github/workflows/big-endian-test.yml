@@ -1,0 +1,34 @@
+name: Big-endian test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  qemu:
+    runs-on: ubuntu-latest
+    steps:
+    - 
+      name: Checkout code
+      uses: actions/checkout@v6
+    -
+      name: Set up QEMU
+      uses: docker/setup-qemu-action@v4
+    -
+      name: Run an s390x Container
+      run: |
+          docker run --rm \
+            --platform linux/s390x \
+            -v ${{ github.workspace }}:/build_space \
+            -w /build_space \
+            ubuntu:latest \
+            /bin/bash -c "
+              set -ex
+              apt-get update -y
+              apt-get install -y build-essential cmake
+              cmake -S . -B build
+              cmake --build build
+              ctest --test-dir build --output-on-failure
+            "
