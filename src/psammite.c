@@ -132,7 +132,6 @@ InternalExitCodes psammite_step(PsammiteVM *vm) {
       return VM_ERR_GENERIC;
   
   }
-  return VM_OK;
 }
 
 int psammite_run(PsammiteVM *vm) {
