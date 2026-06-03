@@ -81,6 +81,35 @@ typedef enum {
   FR31 = 31
 } FRegister;
 
+
+typedef enum {
+  EXECUTE = 0x00,
+  LDC = 0x01,
+  LDR = 0x02,
+  LD = 0x03,
+  SD = 0x04,
+} Opcodes;
+
+typedef enum {
+  SYSTEM = 0x00,
+  IMATH = 0x01,
+  
+} ExecuteCategoryCode;
+
+typedef enum {
+  HALT = 0x00,
+  NOP = 0x01,
+} SystemCodes;
+
+typedef enum {
+  ADD = 0x00,
+  SUB = 0x01,
+  MUL = 0x02,
+  DIV = 0x03,
+  MOD = 0x04,
+} IMathCodes;
+
+
 typedef union {
   uint64_t bits;
   double as_float;

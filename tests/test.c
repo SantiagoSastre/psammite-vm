@@ -5,9 +5,9 @@
 #define VM_ASSERT(condition)                                                   \
 do {                                                                           \
   if(!(condition)) {                                                           \
-    fprintf(stderr, "      Test:     %s\n", __func__);                         \
-    fprintf(stderr, "      Location: %s:%d\n", __FILE__, __LINE__);            \
-    fprintf(stderr, "[PSAMMITE VM FATAL] Assertion failed:%s\n",#condition);   \
+    fprintf(stderr, "Test:     %s\n", __func__);                               \
+    fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);                  \
+    fprintf(stderr, "[PSAMMITE ERROR] Assertion failed:%s\n",#condition);      \
     exit(1);                                                                   \
   }                                                                            \
 } while(0)

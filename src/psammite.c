@@ -122,6 +122,12 @@ void psammite_dump(PsammiteVM *vm) {
   printf("\n--------------------------------------------------------------------------------------------------------------------------------\n");
 }
 
+
+int psammite_step(PsammiteVM *vm) {
+  memcpy(&vm->ir,&vm->memory[vm->pc],sizeof(uint8_t)*4);
+  return 0;
+}
+
 //int psammite_run(PsammiteVM *vm) {
 //
 //  return 0;

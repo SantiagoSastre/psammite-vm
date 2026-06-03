@@ -10,7 +10,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
 if(NOT CMAKE_BUILD_TYPE)
-  message(STATUS "Setting build type to 'Debug', as none was specified.")
+  message(STATUS "Setting build type to 'Debug', as none was specified. This only applies to single-config build systems.")
   set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
