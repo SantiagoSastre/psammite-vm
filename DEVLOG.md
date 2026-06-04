@@ -65,38 +65,38 @@ This layout will be used to perform immediate operations and register loading. L
 [6-bit opcode][5-bit target register][2-bit chunk selector (to form 64-bit numbers)][3-bit padding][16-bit immediate]
 Starting instructions
 * Memory related
-  * LDC (Chunk) - forms 64-bit numbers from immediates
-  * LDR (I1) - load PC-relative values from RAM, with a 21-bit range
-  * LD (I2) - load RAM from an address stored in a register and put it in another register
-  * SD (I2) - store a value from a register in an address in RAM stored in another register
+  * `LDC` (Chunk) - forms 64-bit numbers from immediates
+  * `LDR` (I1) - load PC-relative values from RAM, with a 21-bit range
+  * `LD` (I2) - load RAM from an address stored in a register and put it in another register
+  * `SD` (I2) - store a value from a register in an address in RAM stored in another register
 * Arithmetic and System
-  * EXECUTE (R)
+  * `EXECUTE` (R)
 
 As the EXECUTE opcode has capability for many functions as an R-type instruction, here are the first I will implement:
 
-Under the 4-bit category 0001 is going to be integer math. Inside of it we will have the following basic instructions, identified by the 7-bit function field:
-* ADD
-* SUB
-* MUL
-* DIV
-* MOD
+Under the 4-bit category 0001` is going to be integer math. Inside of it we will have the following basic instructions, identified by the 7-bit function field:
+* `ADD`
+* `SUB`
+* `MUL`
+* `DIV`
+* `MOD`
 
-The 4-bit category 0000 is for syscalls, and inside its 7-bit function field:
-* HALT
+The 4-bit category `0000` is for syscalls, and inside its 7-bit function field:
+* `HALT`
 
 The plan and some notes
 
 I am going to set up CMake, write all the code to have the above functioning with a Fetch-Decode-Execute cycle. Then, after everything is working, I will go back to the README.md, update the specification, and start planning the next additions to the ISA. I originally planned to have a separate syscall opcode, imath, and fmath; but by merging them we use the space that would otherwise remain empty inside each, and leave space for more opcodes.
 
-If you have been paying attention, you may have noticed the README.md mentions a 64KB RAM. Why would Psammite need something other than LDR and a hypothetical SDR? Everything is in range of LDR right now. You are completely right, but I do not intend to leave RAM at that size, so I'm planning ahead.
+If you have been paying attention, you may have noticed the README.md mentions a 64KB RAM. Why would Psammite need something other than `LDR`? Everything is in range of LDR right now. You are completely right, but I do not intend to leave RAM at that size, so I'm planning ahead.
 
 See you soon!
 ## [4/6/26] Basic Fetch-Decode-Execute cycle
 
-Hello! It has been a couple days, and I have been hard at work on making Psammite a functional vm.
+Hello! It has been a couple days, and I have been hard at work on making Psammite a functional VM.
 
-I have implemented all the instructions I mentioned on the previous log, plus NOP, SDIV, and SMOD for signed operations. Also, the project structure has been overhauled to allow more modularity. CTest has been integrated as the testing framework, I plan to have unit tests checking the functionality of the VM. To that end I have taken a slightly less conventional approach to header files. Most inlined functions (inlined due to performance gains, albeit small, in the hot loop) have been written in header files. This is because, to have granular testing, access to the functions in the test file is needed.
-I also have written the VM_TO_HOST macros so that the VM can run on both big endian and little endian hosts. And to make sure the code compiles correctly on multiple platforms, GitHub actions that compile the VM with Clang, GCC, and MSVC in Windows and Linux (little endian and big endian) have been configured.
+I have implemented all the instructions I mentioned on the previous log, plus `NOP`, `SDIV`, and `SMOD` for signed operations. Also, the project structure has been overhauled to allow more modularity. CTest has been integrated as the testing framework, I plan to have unit tests checking the functionality of the VM. To that end I have taken a slightly less conventional approach to header files. Most inlined functions (inlined due to performance gains, albeit small, in the hot loop) have been written in header files. This is because, to have granular testing, access to the functions in the test file is needed.
+I also have written the `VM_TO_HOST` macros so that the VM can run on both big endian and little endian hosts. And to make sure the code compiles correctly on multiple platforms, GitHub actions that compile the VM with Clang, GCC, and MSVC in Windows and Linux (little endian and big endian) have been configured.
 
 Most of my time was spent writing the foundations of the VM so it is testable, portable, and reliable. So I have not updated the README.md yet with the instructions I implemented.
 

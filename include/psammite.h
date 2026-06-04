@@ -220,7 +220,7 @@ static inline InternalExitCodes psammite_imath_execute(PsammiteVM *vm, uint8_t f
       return VM_OK;
     case DIV:
       if (psammite_read_register(vm, rs2)==0){
-        psammite_write_register(vm,rd,-1);
+        psammite_write_register(vm,rd,(uint64_t)-1);
       } else {
       psammite_write_register(vm, rd, psammite_read_register(vm, rs1) / psammite_read_register(vm, rs2));
       }
