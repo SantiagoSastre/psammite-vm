@@ -63,7 +63,7 @@ This layout will be used to perform immediate operations and register loading. L
 #### Chunk
 
 [6-bit opcode][5-bit target register][2-bit chunk selector (to form 64-bit numbers)][3-bit padding][16-bit immediate]
-Starting instructions
+#### Starting instructions
 * Memory related
   * `LDC` (Chunk) - forms 64-bit numbers from immediates
   * `LDR` (I1) - load PC-relative values from RAM, with a 21-bit range
@@ -84,7 +84,7 @@ Under the 4-bit category 0001` is going to be integer math. Inside of it we will
 The 4-bit category `0000` is for syscalls, and inside its 7-bit function field:
 * `HALT`
 
-The plan and some notes
+### The plan and some notes
 
 I am going to set up CMake, write all the code to have the above functioning with a Fetch-Decode-Execute cycle. Then, after everything is working, I will go back to the README.md, update the specification, and start planning the next additions to the ISA. I originally planned to have a separate syscall opcode, imath, and fmath; but by merging them we use the space that would otherwise remain empty inside each, and leave space for more opcodes.
 
