@@ -5,7 +5,8 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
-#include "endian.h"
+#include "psammite_endian.h"
+#include "psammite_decoders.h"
 
 #define NUM_REGISTER 32
 #define VM_MEM_SIZE 65536
@@ -95,7 +96,7 @@ typedef enum {
 typedef enum {
   SYSTEM = 0x00,
   IMATH = 0x01,
-  
+
 } ExecuteCategoryCode;
 
 typedef enum {
@@ -128,9 +129,9 @@ typedef union {
 typedef struct {
   uint64_t pc;
   uint32_t ir;
-  uint64_t registers[NUM_REGISTER];
-  PsammiteFloat f_registers[NUM_REGISTER];
-  uint8_t memory[VM_MEM_SIZE];
+  uint64_t _registers[NUM_REGISTER];
+  PsammiteFloat _f_registers[NUM_REGISTER];
+  uint8_t _memory[VM_MEM_SIZE];
 } PsammiteVM;
 
 
@@ -144,50 +145,54 @@ InternalExitCodes psammite_step(PsammiteVM *vm);
 int psammite_run(PsammiteVM *vm);
 
 static inline void psammite_write_register(PsammiteVM *vm, uint8_t reg, uint64_t value) {
-  vm->registers[reg] = value;
-  vm->registers[ZR] = 0; //Hard-wiring ZR to zero
+  vm->_registers[reg] = value;
+  vm->_registers[ZR] = 0; //Hard-wiring ZR to zero
 }
 
+
+static inline uint64_t psammite_read_register(PsammiteVM *vm, uint8_t reg) {
+    return vm->_registers[reg];
+}
+
+static inline PsammiteFloat psammite_read_f_register(PsammiteVM *vm, uint8_t reg) {
+    return vm->_f_registers[reg];
+}
+
+
+static inline int psammite_read_memory(PsammiteVM *vm, uint64_t address, uint64_t *out_value) {
+    if (address+8>VM_MEM_SIZE) {
+        return 1;
+    }
+    memcpy(out_value,&vm->_memory[address],sizeof(uint64_t));
+    *out_value = VM_TO_HOST64(*out_value);
+    return 0;
+}
+
+static inline int psammite_write_memory(PsammiteVM *vm, uint64_t address, uint64_t value) {
+    if (address+8>VM_MEM_SIZE) {
+        return 1;
+    }
+    uint64_t tmp = HOST_TO_VM64(value);
+    memcpy(&vm->_memory[address], &tmp, sizeof(uint64_t));
+    return 0;
+}
 
 static inline int psammite_fetch_to_ir(PsammiteVM *vm) {
   if (vm->pc+4>VM_MEM_SIZE) {
     return 1;
   }
-  memcpy(&vm->ir,&vm->memory[vm->pc],sizeof(uint8_t)*4);
+  memcpy(&vm->ir,&vm->_memory[vm->pc],sizeof(uint32_t));
   vm->ir = VM_TO_HOST32(vm->ir);
   vm->pc = vm->pc + 4;
   return 0;
 }
 
-static inline uint8_t psammite_decode_opcode(uint32_t instruction) {
-  uint8_t opcode = (instruction>>26) & 0x3F;
-  return opcode;
-}
 
-static inline uint8_t psammite_decode_func4(uint32_t instruction) {
-  uint8_t func4 = (instruction>>7) & 0xF;
-  return func4;
-}
 
-static inline uint8_t psammite_decode_func7(uint32_t instruction) {
-  uint8_t func7 = instruction & 0x7F;
-  return func7;
-}
 
-static inline uint8_t psammite_decode_rs1(uint32_t instruction) {
-  uint8_t rs1 = (instruction>>21) & 0x1F;
-  return rs1;
-}
 
-static inline uint8_t psammite_decode_rs2(uint32_t instruction) {
-  uint8_t rs2 = (instruction>>16) & 0x1F;
-  return rs2;
-}
 
-static inline uint8_t psammite_decode_rd(uint32_t instruction) {
-  uint8_t rd = (instruction>>11) & 0x1F;
-  return rd;
-}
+
 
 //No other arguments for now to prevent compiler errors with strict flags, will add as more system opcodes use more elements
 static inline InternalExitCodes psammite_system_execute(uint8_t func7) {
@@ -205,63 +210,63 @@ static inline InternalExitCodes psammite_system_execute(uint8_t func7) {
 static inline InternalExitCodes psammite_imath_execute(PsammiteVM *vm, uint8_t func7, uint8_t rs1, uint8_t rs2, uint8_t rd) {
   switch (func7) {
     case ADD:
-      psammite_write_register(vm, rd,  vm->registers[rs1] + vm->registers[rs2]);
+      psammite_write_register(vm, rd,  psammite_read_register(vm, rs1) + psammite_read_register(vm, rs2));
       return VM_OK;
     case SUB:
-      psammite_write_register(vm, rd, vm->registers[rs1] - vm->registers[rs2]);
+      psammite_write_register(vm, rd, psammite_read_register(vm, rs1) - psammite_read_register(vm, rs2));
       return VM_OK;
     case MUL:
-      psammite_write_register(vm, rd,  vm->registers[rs1] * vm->registers[rs2]);
+      psammite_write_register(vm, rd,  psammite_read_register(vm, rs1) * psammite_read_register(vm, rs2));
       return VM_OK;
     case DIV:
-      if (vm->registers[rs2]==0){
-        psammite_write_register(vm,rd,0xFFFFFFFFFFFFFFFF);
+      if (psammite_read_register(vm, rs2)==0){
+        psammite_write_register(vm,rd,-1);
       } else {
-      psammite_write_register(vm, rd, vm->registers[rs1] / vm->registers[rs2]);
+      psammite_write_register(vm, rd, psammite_read_register(vm, rs1) / psammite_read_register(vm, rs2));
       }
       return VM_OK;
     case MOD:
-      if (vm->registers[rs2]==0){
-        psammite_write_register(vm, rd, vm->registers[rs1]);
+      if (psammite_read_register(vm, rs2)== 0){
+        psammite_write_register(vm, rd, psammite_read_register(vm, rs1));
       } else {
-      psammite_write_register(vm, rd, vm->registers[rs1] % vm->registers[rs2]);
+      psammite_write_register(vm, rd, psammite_read_register(vm, rs1) % psammite_read_register(vm, rs2));
       }
       return VM_OK;
     case SDIV:
-      if (vm->registers[rs2]==0){
-        psammite_write_register(vm,rd,0xFFFFFFFFFFFFFFFF);
+      if (psammite_read_register(vm, rs2)==0){
+        psammite_write_register(vm,rd,INT64_MAX);
       }
-      else if ((int64_t)vm->registers[rs1]==INT64_MIN && (int64_t)vm->registers[rs2]==-1) {
+      else if ((int64_t)psammite_read_register(vm, rs1)==INT64_MIN && (int64_t)psammite_read_register(vm, rs2)==-1) {
         psammite_write_register(vm, rd, INT64_MAX);
       }
       else {
-      psammite_write_register(vm, rd,(int64_t)vm->registers[rs1] / (int64_t)vm->registers[rs2]);
+      psammite_write_register(vm, rd,(int64_t)psammite_read_register(vm, rs1) / (int64_t)psammite_read_register(vm, rs2));
       }
       return VM_OK;
     case SMOD:
-      if (vm->registers[rs2]==0){
-        psammite_write_register(vm, rd, vm->registers[rs1]);
+      if (psammite_read_register(vm, rs2)==0){
+        psammite_write_register(vm, rd, psammite_read_register(vm, rs1));
       }
-      else if ((int64_t)vm->registers[rs1]==INT64_MIN && (int64_t)vm->registers[rs2]==-1) {
+      else if ((int64_t)psammite_read_register(vm, rs1)==INT64_MIN && (int64_t)psammite_read_register(vm, rs2)==-1) {
         psammite_write_register(vm, rd, 0);
       }
       else {
-      psammite_write_register(vm, rd, (int64_t)vm->registers[rs1] % (int64_t)vm->registers[rs2]);
+      psammite_write_register(vm, rd, (int64_t)psammite_read_register(vm, rs1) % (int64_t)psammite_read_register(vm, rs2));
       }
       return VM_OK;
     default:
       fprintf(stderr, "Unrecognized Function 7 parameter in Execute IMath instruction, halting.");
       return VM_ERR_GENERIC;
-  
+
   }
 }
 
 static inline InternalExitCodes psammite_route_execute(PsammiteVM *vm, uint32_t instruction) {
-  uint8_t func4 = psammite_decode_func4(instruction);
-  uint8_t func7 = psammite_decode_func7(instruction);
-  uint8_t rs1 = psammite_decode_rs1(instruction);
-  uint8_t rs2 = psammite_decode_rs2(instruction);
-  uint8_t rd = psammite_decode_rd(instruction);
+  uint8_t func4 = psammite_decode_rtype_func4(instruction);
+  uint8_t func7 = psammite_decode_rtype_func7(instruction);
+  uint8_t rs1 = psammite_decode_rtype_rs1(instruction);
+  uint8_t rs2 = psammite_decode_rtype_rs2(instruction);
+  uint8_t rd = psammite_decode_rtype_rd(instruction);
   switch (func4) {
     case SYSTEM:
       return psammite_system_execute(func7);
@@ -273,5 +278,63 @@ static inline InternalExitCodes psammite_route_execute(PsammiteVM *vm, uint32_t 
   }
 }
 
+static inline InternalExitCodes psammite_ldc(PsammiteVM *vm, uint32_t instruction) {
+  uint8_t rd = psammite_decode_chunk_rd(instruction);
+  uint8_t chunk_selector = psammite_decode_chunk_selector(instruction);
+  uint16_t immediate = psammite_decode_chunk_immediate(instruction);
+  uint64_t val = psammite_read_register(vm, rd);
+  uint64_t mask = ~(((uint64_t)0xFFFF)<<(16*chunk_selector));
+  uint64_t masked_val = val & mask;
+  uint64_t immediate_at_chunk = ((uint64_t)immediate)<<(16*chunk_selector);
+  uint64_t new_val = immediate_at_chunk | masked_val;
+  psammite_write_register(vm, rd, new_val);
+  return VM_OK;
+}
+
+static inline InternalExitCodes psammite_ldr(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rd = psammite_decode_i1type_rd(instruction);
+    uint32_t offset = psammite_decode_i1type_offset(instruction);
+    int32_t signed_offset = ((int32_t)(offset<<11)) >> 11;
+    uint64_t value;
+    int code = psammite_read_memory(vm, vm->pc+signed_offset, &value);
+    if (code != 0) {
+        return VM_ERR_GENERIC;
+    }
+    psammite_write_register(vm, rd,value);
+    return VM_OK;
+
+}
+
+static inline InternalExitCodes psammite_ld(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rs1 = psammite_decode_i2type_rs1(instruction);
+    uint8_t rd = psammite_decode_i2type_rd(instruction);
+    uint16_t offset = psammite_decode_i2type_immediate(instruction);
+    int16_t signed_offset = (int16_t) offset;
+    uint64_t base_address = psammite_read_register(vm, rs1);
+    uint64_t final_address = base_address + signed_offset;
+    uint64_t value;
+    int code = psammite_read_memory(vm, final_address, &value);
+    if (code != 0) {
+        return VM_ERR_GENERIC;
+    }
+    psammite_write_register(vm, rd,value);
+    return VM_OK;
+}
+
+static inline InternalExitCodes psammite_sd(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t value_reg = psammite_decode_i2type_rs1(instruction);
+    uint8_t address_reg = psammite_decode_i2type_rd(instruction);
+    uint16_t offset = psammite_decode_i2type_immediate(instruction);
+    int16_t signed_offset = (int16_t) offset;
+    uint64_t base_address = psammite_read_register(vm, address_reg);
+    uint64_t final_address = base_address + signed_offset;
+    uint64_t value = psammite_read_register(vm, value_reg);
+    int code = psammite_write_memory(vm, final_address, value);
+    if (code != 0) {
+        return VM_ERR_GENERIC;
+    }
+    return VM_OK;
+
+}
 
 #endif

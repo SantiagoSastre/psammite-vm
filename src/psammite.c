@@ -6,14 +6,14 @@
 int psammite_reset(PsammiteVM *vm) {
   vm->pc = 0;
   vm->ir = 0;
-  memset(vm->registers, 0, sizeof(vm->registers));
-  memset(vm->f_registers,0,sizeof(vm->f_registers));
-  memset(vm->memory, 0, sizeof(vm->memory));
-  
+  memset(vm->_registers, 0, sizeof(vm->_registers));
+  memset(vm->_f_registers,0,sizeof(vm->_f_registers));
+  memset(vm->_memory, 0, sizeof(vm->_memory));
+
   //Set the Stack Pointer to the end of memory
-  vm->registers[SP] = VM_MEM_SIZE;
-  
-  
+  psammite_write_register(vm, SP, VM_MEM_SIZE);
+
+
   return 0;
 }
 
@@ -22,7 +22,7 @@ int psammite_init(PsammiteVM *vm) {
     return 1;
   }
   return 0;
-  
+
 }
 
 PsammiteVM* psammite_new() {
@@ -43,7 +43,7 @@ int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size)
     fprintf(stderr, "FATAL ERROR: Program too large for VM memory.");
     return 1;
   }
-  memcpy(vm->memory, program, program_size);
+  memcpy(vm->_memory, program, program_size);
   return 0;
 }
 
@@ -74,19 +74,19 @@ void psammite_dump(PsammiteVM *vm) {
         snprintf(reg_name, sizeof(reg_name), "R%02d", i);
         break;
     }
-    printf("%-4s: 0x%016" PRIX64 "    |    ",reg_name , vm->registers[i] );
+    printf("%-4s: 0x%016" PRIX64 "    |    ",reg_name , psammite_read_register(vm, i) );
   }
   printf("\n");
 
   printf("-----------------------Float Registers------------------------------------------------------------------------------------------\n");
-  
+
   for(FRegister i = FR0; i<NUM_REGISTER; i++) {
     if (i%4==0 && i!=FR0) {
       printf("\n");
     }
     char reg_name[5];
     snprintf(reg_name, sizeof(reg_name), "FR%02d", i);
-    printf("%-4s: %018.6lf    |    ",reg_name , vm->f_registers[i].as_float );
+    printf("%-4s: %018.6lf    |    ",reg_name , psammite_read_f_register(vm, i).as_float );
   }
   printf("\n");
   printf("-----------------------PC(0x%016" PRIX64 ")-----------------------------------------------------------------------------------\n",vm->pc);
@@ -112,13 +112,14 @@ void psammite_dump(PsammiteVM *vm) {
       }
       printf("0x%016" PRIX64 "  |  " , i );
     }
-    printf("%02X  ",vm->memory[i]);
+    printf("%02X  ",vm->_memory[i]);
   }
   printf("                                        |");
   printf("\n--------------------------------------------------------------------------------------------------------------------------------\n");
 }
 
 InternalExitCodes psammite_step(PsammiteVM *vm) {
+    InternalExitCodes code;
   if (psammite_fetch_to_ir(vm)!=0) {
     return VM_ERR_GENERIC;
   }
@@ -126,12 +127,26 @@ InternalExitCodes psammite_step(PsammiteVM *vm) {
   uint8_t opcode = psammite_decode_opcode(instruction);
   switch (opcode) {
     case EXECUTE:
-      return psammite_route_execute(vm, instruction);
+      code = psammite_route_execute(vm, instruction);
+      break;
+    case LDC:
+        code = psammite_ldc(vm, instruction);
+        break;
+    case LDR:
+        code = psammite_ldr(vm, instruction);
+        break;
+    case LD:
+        code = psammite_ld(vm, instruction);
+        break;
+    case SD:
+        code = psammite_sd(vm, instruction);
+        break;
     default:
       fprintf(stderr, "Unrecognized Opcode, halting.");
-      return VM_ERR_GENERIC;
-  
+      code = VM_ERR_GENERIC;
+      break;
   }
+  return code;
 }
 
 int psammite_run(PsammiteVM *vm) {
@@ -144,5 +159,3 @@ int psammite_run(PsammiteVM *vm) {
   }
   return 0;
 }
-
-
