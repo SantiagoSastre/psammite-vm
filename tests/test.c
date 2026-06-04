@@ -23,15 +23,15 @@ void test_vm_initialization() {
 
 void test_vm_endianness() {
   PsammiteVM* vm = psammite_new();
-  vm->memory[0] = 0xDD;
-  vm->memory[1] = 0xCC;
-  vm->memory[2] = 0xBB;
-  vm->memory[3] = 0xAA;
+  vm->_memory[0] = 0xDD;
+  vm->_memory[1] = 0xCC;
+  vm->_memory[2] = 0xBB;
+  vm->_memory[3] = 0xAA;
   int status = psammite_fetch_to_ir(vm);
   VM_ASSERT(status==0);
   VM_ASSERT(vm->ir==0xAABBCCDD);
   psammite_free(vm);
-  
+
 }
 
 int main() {
