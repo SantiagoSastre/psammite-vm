@@ -202,60 +202,62 @@ static inline InternalExitCodes psammite_system_execute(uint8_t func7) {
     case NOP:
       return VM_OK;
     default:
-      fprintf(stderr, "Unrecognized Function 7 parameter in Execute System instruction, halting.");
+      fprintf(stderr, "Unrecognized Function 7 parameter in Execute System instruction, halting.\n");
       return VM_ERR_GENERIC;
   }
 }
 
 static inline InternalExitCodes psammite_imath_execute(PsammiteVM *vm, uint8_t func7, uint8_t rs1, uint8_t rs2, uint8_t rd) {
+  uint64_t val1 = psammite_read_register(vm, rs1);
+  uint64_t val2 = psammite_read_register(vm, rs2);
   switch (func7) {
     case ADD:
-      psammite_write_register(vm, rd,  psammite_read_register(vm, rs1) + psammite_read_register(vm, rs2));
+      psammite_write_register(vm, rd,  val1 + val2);
       return VM_OK;
     case SUB:
-      psammite_write_register(vm, rd, psammite_read_register(vm, rs1) - psammite_read_register(vm, rs2));
+      psammite_write_register(vm, rd, val1 - val2);
       return VM_OK;
     case MUL:
-      psammite_write_register(vm, rd,  psammite_read_register(vm, rs1) * psammite_read_register(vm, rs2));
+      psammite_write_register(vm, rd,  val1 * val2);
       return VM_OK;
     case DIV:
-      if (psammite_read_register(vm, rs2)==0){
+      if (val2==0){
         psammite_write_register(vm,rd,(uint64_t)-1);
       } else {
-      psammite_write_register(vm, rd, psammite_read_register(vm, rs1) / psammite_read_register(vm, rs2));
+      psammite_write_register(vm, rd, val1 / val2);
       }
       return VM_OK;
     case MOD:
-      if (psammite_read_register(vm, rs2)== 0){
-        psammite_write_register(vm, rd, psammite_read_register(vm, rs1));
+      if (val2== 0){
+        psammite_write_register(vm, rd, val1);
       } else {
-      psammite_write_register(vm, rd, psammite_read_register(vm, rs1) % psammite_read_register(vm, rs2));
+      psammite_write_register(vm, rd, val1 % val2);
       }
       return VM_OK;
     case SDIV:
-      if (psammite_read_register(vm, rs2)==0){
-        psammite_write_register(vm,rd,INT64_MAX);
+      if (val2==0){
+        psammite_write_register(vm,rd,(uint64_t)-1);
       }
-      else if ((int64_t)psammite_read_register(vm, rs1)==INT64_MIN && (int64_t)psammite_read_register(vm, rs2)==-1) {
-        psammite_write_register(vm, rd, INT64_MAX);
+      else if ((int64_t)val1==INT64_MIN && (int64_t)val2==-1) {
+        psammite_write_register(vm, rd, (uint64_t)INT64_MIN);
       }
       else {
-      psammite_write_register(vm, rd,(int64_t)psammite_read_register(vm, rs1) / (int64_t)psammite_read_register(vm, rs2));
+          psammite_write_register(vm, rd, (uint64_t)((int64_t)val1 / (int64_t)val2));
       }
       return VM_OK;
     case SMOD:
-      if (psammite_read_register(vm, rs2)==0){
-        psammite_write_register(vm, rd, psammite_read_register(vm, rs1));
+      if (val2==0){
+        psammite_write_register(vm, rd, val1);
       }
-      else if ((int64_t)psammite_read_register(vm, rs1)==INT64_MIN && (int64_t)psammite_read_register(vm, rs2)==-1) {
+      else if ((int64_t)val1==INT64_MIN && (int64_t)val2==-1) {
         psammite_write_register(vm, rd, 0);
       }
       else {
-      psammite_write_register(vm, rd, (int64_t)psammite_read_register(vm, rs1) % (int64_t)psammite_read_register(vm, rs2));
+          psammite_write_register(vm, rd, (uint64_t)((int64_t)val1 % (int64_t)val2));
       }
       return VM_OK;
     default:
-      fprintf(stderr, "Unrecognized Function 7 parameter in Execute IMath instruction, halting.");
+      fprintf(stderr, "Unrecognized Function 7 parameter in Execute IMath instruction, halting.\n");
       return VM_ERR_GENERIC;
 
   }
@@ -273,7 +275,7 @@ static inline InternalExitCodes psammite_route_execute(PsammiteVM *vm, uint32_t 
     case IMATH:
       return psammite_imath_execute(vm, func7, rs1, rs2, rd);
     default:
-      fprintf(stderr, "Unrecognized Function 4 parameter in Execute instruction, halting.");
+      fprintf(stderr, "Unrecognized Function 4 parameter in Execute instruction, halting.\n");
       return VM_ERR_GENERIC;
   }
 }
