@@ -141,6 +141,9 @@ PsammiteVM* psammite_new();
 void psammite_free(PsammiteVM *vm);
 int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size);
 void psammite_dump(PsammiteVM *vm);
+void psammite_print_registers(PsammiteVM *vm);
+void psammite_print_f_registers(PsammiteVM *vm);
+void psammite_print_memory_window(PsammiteVM *vm);
 InternalExitCodes psammite_step(PsammiteVM *vm);
 int psammite_run(PsammiteVM *vm);
 
