@@ -40,7 +40,7 @@ void psammite_free(PsammiteVM *vm) {
 
 int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size){
   if (program_size > VM_MEM_SIZE) {
-    fprintf(stderr, "FATAL ERROR: Program too large for VM memory.");
+    fprintf(stderr, "FATAL ERROR: Program too large for VM memory.\n");
     return 1;
   }
   memcpy(vm->_memory, program, program_size);
