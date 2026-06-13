@@ -91,6 +91,7 @@ typedef enum {
   LDR = 0x02,
   LD = 0x03,
   SD = 0x04,
+  ADDI = 0x05
 } Opcodes;
 
 typedef enum {
@@ -341,5 +342,19 @@ static inline InternalExitCodes psammite_sd(PsammiteVM *vm, uint32_t instruction
     return VM_OK;
 
 }
+
+
+static inline InternalExitCodes psammite_addi(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t value_reg = psammite_decode_i2type_rs1(instruction);
+    uint8_t address_reg = psammite_decode_i2type_rd(instruction);
+    uint16_t immediate = psammite_decode_i2type_immediate(instruction);
+    uint64_t value = psammite_read_register(vm, value_reg);
+    uint64_t value_plus_immediate = value + (uint64_t) ((int16_t)immediate);
+    psammite_write_register(vm, address_reg, value_plus_immediate);
+
+    return VM_OK;
+
+}
+
 
 #endif

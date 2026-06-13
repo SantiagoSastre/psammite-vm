@@ -1,2 +1,3 @@
 build/
 .cache/
+sandbox/psammite_sandbox.c

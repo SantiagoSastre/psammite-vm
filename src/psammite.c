@@ -150,8 +150,11 @@ InternalExitCodes psammite_step(PsammiteVM *vm) {
     case SD:
         code = psammite_sd(vm, instruction);
         break;
+    case ADDI:
+        code = psammite_addi(vm, instruction);
+        break;
     default:
-      fprintf(stderr, "Unrecognized Opcode, halting.");
+      fprintf(stderr, "Unrecognized Opcode, halting.\n");
       code = VM_ERR_GENERIC;
       break;
   }
