@@ -6,7 +6,7 @@ Psammite is currently a work in progress. Check the **[Developer Log](DEVLOG.md)
 Psammite uses CMake for its build system.
 
 ### Basic setup
-
+#### VM
 Generate the build files:
 ```
 cmake -S . -B build
@@ -23,6 +23,27 @@ Run the VM:
 Linux/MacOS: `./run.sh`
 
 Windows: `.\build\Debug\psammite_vm.exe` if using MSVC, otherwise `.\build\psammite_vm.exe`
+
+#### Sandbox
+
+To code in the sandbox first copy the template: **[Template](sandbox/psammite_sandbox_template.c)** into a file in the same folder called `psammite_sandbox.c`. Write your program where indicated in the file. Then run:
+```
+cmake -S . -B build -DCOMPILE_SANDBOX=true
+cmake --build build
+```
+If using MSVC:
+```
+.\build\Debug\psammite_sandbox.exe
+```
+If using GCC/Clang:
+* Windows
+```
+.\build\psammite_sandbox.exe
+```
+* MacOS/Linux
+```
+./build/psammite_sandbox
+```
 
 ### Advanced
 
