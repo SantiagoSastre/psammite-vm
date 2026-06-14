@@ -58,7 +58,7 @@ static inline uint32_t psammite_decode_jtype_offset(uint32_t instruction) {
 
 //-------- I ------------------------
 
-static inline uint8_t psammite_decode_itype_rs1(uint32_t instruction) {
+static inline uint8_t psammite_decode_itype_rs(uint32_t instruction) {
   return psammite_decode_25_21(instruction);
 }
 

@@ -119,3 +119,5 @@ On another note, the `NOP` instruction has been demoted to a pseudo-instruction 
 ## [14/6/26] Some changes, jump and branching
 
 Some quick changes: I have gone ahead and renamed the `I1` layout to `J` and `I2` to just `I`. This is because I realized the `I1` layout was exactly what was needed for the jump instruction layout, so renaming to `J` is much more adequate. Also, because the git commit history was getting cluttered with README and DEVLOG fixes, the project is migrating to a feature branch workflow.
+
+For now unaligned memory access is allowed when reading constants, however, it isn't when performing jump/branching instructions. In that case the address is forcefully aligned through a mask.

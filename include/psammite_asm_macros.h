@@ -60,5 +60,8 @@
 #define ASM_ADDI(rs,rd,immediate) I_ENCODER(ADDI,rs,rd,immediate)
 #define ASM_LOADI(rd,immediate) I_ENCODER(ADDI,ZR,rd,immediate) // pseudo-instruction
 
+#define ASM_JAL(rd, immediate) J_ENCODER(JAL, rd, immediate)
+#define ASM_J(immediate) J_ENCODER(JAL, ZR, immediate)  // pseudo-instruction
+#define ASM_JALR(rs, rd, immediate) I_ENCODER(JALR, rs, rd, immediate)
 
 #endif
