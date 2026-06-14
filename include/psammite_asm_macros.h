@@ -23,11 +23,11 @@
     (uint8_t) ((((rs) >> 3) & 0x03) | (((opcode) & 0x3F) << 2))
 
 
-    #define B_ENCODER(opcode, rs, rd, immediate) \
+    #define B_ENCODER(opcode, rs1, rs2, immediate) \
         (uint8_t) ((immediate) & 0xFF), \
         (uint8_t) (((immediate) >> 8) & 0xFF), \
-        (uint8_t) (((rd) & 0x1F) | (((rs) & 0x07)<<5)), \
-        (uint8_t) ((((rs) >> 3) & 0x03) | (((opcode) & 0x3F) << 2))
+        (uint8_t) (((rs2) & 0x1F) | (((rs1) & 0x07)<<5)), \
+        (uint8_t) ((((rs1) >> 3) & 0x03) | (((opcode) & 0x3F) << 2))
 
 #define R_ENCODER(opcode, rs1, rs2, rd, func4, func7) \
     (uint8_t) (((func7) & 0x7F) | (((func4) & 0x1)<<7) ), \
