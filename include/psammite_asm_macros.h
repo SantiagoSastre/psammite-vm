@@ -9,14 +9,14 @@
     (uint8_t) ((((rs) >> 3) & 0x03) | (((opcode) & 0x3F) << 2))
 
 
-#define I1_ENCODER(opcode, rs, immediate) \
+#define J_ENCODER(opcode, rs, immediate) \
     (uint8_t) ((immediate) & 0xFF), \
     (uint8_t) (((immediate) >> 8) & 0xFF), \
     (uint8_t) ((((immediate) >> 16) & 0x1F) | (((rs) & 0x07)<<5)), \
     (uint8_t) ((((rs) >> 3) & 0x03) | (((opcode) & 0x3F) << 2))
 
 
-#define I2_ENCODER(opcode, rs, rd, immediate) \
+#define I_ENCODER(opcode, rs, rd, immediate) \
     (uint8_t) ((immediate) & 0xFF), \
     (uint8_t) (((immediate) >> 8) & 0xFF), \
     (uint8_t) (((rd) & 0x1F) | (((rs) & 0x07)<<5)), \
@@ -42,7 +42,7 @@
 
 
 #define ASM_HALT R_ENCODER(EXECUTE,0,0,0,SYSTEM,HALT)
-#define ASM_NOP I2_ENCODER(ADDI,ZR,ZR,0) // pseudo-instruction
+#define ASM_NOP I_ENCODER(ADDI,ZR,ZR,0) // pseudo-instruction
 
 #define ASM_ADD(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,ADD)
 #define ASM_SUB(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SUB)
@@ -53,12 +53,12 @@
 #define ASM_SMOD(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SMOD)
 
 #define ASM_LDC(rs, chunk, immediate) CHUNK_ENCODER(LDC, rs, chunk, immediate)
-#define ASM_LDR(rs, immediate) I1_ENCODER(LDR, rs, immediate)
-#define ASM_LD(rs, rd, offset) I2_ENCODER(LD, rs, rd, offset)
-#define ASM_SD(rs, rmemd, offset) I2_ENCODER(SD, rs, rmemd, offset)
+#define ASM_LDR(rs, immediate) J_ENCODER(LDR, rs, immediate)
+#define ASM_LD(rs, rd, offset) I_ENCODER(LD, rs, rd, offset)
+#define ASM_SD(rs, rmemd, offset) I_ENCODER(SD, rs, rmemd, offset)
 
-#define ASM_ADDI(rs,rd,immediate) I2_ENCODER(ADDI,rs,rd,immediate)
-#define ASM_LOADI(rd,immediate) I2_ENCODER(ADDI,ZR,rd,immediate) // pseudo-instruction
+#define ASM_ADDI(rs,rd,immediate) I_ENCODER(ADDI,rs,rd,immediate)
+#define ASM_LOADI(rd,immediate) I_ENCODER(ADDI,ZR,rd,immediate) // pseudo-instruction
 
 
 #endif

@@ -114,3 +114,8 @@ Firstly, I have added macros that make writing assembly for all currently implem
 One architectural choice I hadn't made, was whether any PC relative offset would start from the current instruction or from the next one. Currently the PC is increased in the fetch step, and I consider that best-practice as it avoids code duplication. If I wanted to have offsets relative to the current instruction, substracting one from the PC would be necessary. At least for me, the added convenience isn't worth an additional arithmetic operation in many instructions. Because of that, offsets will be relative to the next instruction.
 
 On another note, the `NOP` instruction has been demoted to a pseudo-instruction that is an alias of `ADDI(ZR,ZR,0)`. Also, the `psammite_step` function has been inlined too to increase performance.
+
+
+## [14/6/26] Some changes, jump and branching
+
+Some quick changes: I have gone ahead and renamed the `I1` layout to `J` and `I2` to just `I`. This is because I realized the `I1` layout was exactly what was needed for the jump instruction layout, so renaming to `J` is much more adequate. Also, because the git commit history was getting cluttered with README and DEVLOG fixes, the project is migrating to a feature branch workflow.

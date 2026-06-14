@@ -294,8 +294,8 @@ static inline InternalExitCodes psammite_ldc(PsammiteVM *vm, uint32_t instructio
 }
 
 static inline InternalExitCodes psammite_ldr(PsammiteVM *vm, uint32_t instruction) {
-    uint8_t rd = psammite_decode_i1type_rd(instruction);
-    uint32_t offset = psammite_decode_i1type_offset(instruction);
+    uint8_t rd = psammite_decode_jtype_rd(instruction);
+    uint32_t offset = psammite_decode_jtype_offset(instruction);
     int32_t signed_offset = ((int32_t)(offset<<11)) >> 11;
     uint64_t value;
     int code = psammite_read_memory(vm, vm->pc+signed_offset, &value);
@@ -308,9 +308,9 @@ static inline InternalExitCodes psammite_ldr(PsammiteVM *vm, uint32_t instructio
 }
 
 static inline InternalExitCodes psammite_ld(PsammiteVM *vm, uint32_t instruction) {
-    uint8_t rs1 = psammite_decode_i2type_rs1(instruction);
-    uint8_t rd = psammite_decode_i2type_rd(instruction);
-    uint16_t offset = psammite_decode_i2type_immediate(instruction);
+    uint8_t rs1 = psammite_decode_itype_rs1(instruction);
+    uint8_t rd = psammite_decode_itype_rd(instruction);
+    uint16_t offset = psammite_decode_itype_immediate(instruction);
     int16_t signed_offset = (int16_t) offset;
     uint64_t base_address = psammite_read_register(vm, rs1);
     uint64_t final_address = base_address + signed_offset;
@@ -324,9 +324,9 @@ static inline InternalExitCodes psammite_ld(PsammiteVM *vm, uint32_t instruction
 }
 
 static inline InternalExitCodes psammite_sd(PsammiteVM *vm, uint32_t instruction) {
-    uint8_t value_reg = psammite_decode_i2type_rs1(instruction);
-    uint8_t address_reg = psammite_decode_i2type_rd(instruction);
-    uint16_t offset = psammite_decode_i2type_immediate(instruction);
+    uint8_t value_reg = psammite_decode_itype_rs1(instruction);
+    uint8_t address_reg = psammite_decode_itype_rd(instruction);
+    uint16_t offset = psammite_decode_itype_immediate(instruction);
     int16_t signed_offset = (int16_t) offset;
     uint64_t base_address = psammite_read_register(vm, address_reg);
     uint64_t final_address = base_address + signed_offset;
@@ -341,9 +341,9 @@ static inline InternalExitCodes psammite_sd(PsammiteVM *vm, uint32_t instruction
 
 
 static inline InternalExitCodes psammite_addi(PsammiteVM *vm, uint32_t instruction) {
-    uint8_t value_reg = psammite_decode_i2type_rs1(instruction);
-    uint8_t address_reg = psammite_decode_i2type_rd(instruction);
-    uint16_t immediate = psammite_decode_i2type_immediate(instruction);
+    uint8_t value_reg = psammite_decode_itype_rs1(instruction);
+    uint8_t address_reg = psammite_decode_itype_rd(instruction);
+    uint16_t immediate = psammite_decode_itype_immediate(instruction);
     uint64_t value = psammite_read_register(vm, value_reg);
     uint64_t value_plus_immediate = value + (uint64_t) ((int16_t)immediate);
     psammite_write_register(vm, address_reg, value_plus_immediate);
