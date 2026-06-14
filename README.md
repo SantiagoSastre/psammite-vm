@@ -31,11 +31,11 @@ To code in the sandbox first copy the **[template](sandbox/psammite_sandbox_temp
 cmake -S . -B build -DCOMPILE_SANDBOX=true
 cmake --build build
 ```
-If using MSVC:
+##### If using MSVC:
 ```
 .\build\Debug\psammite_sandbox.exe
 ```
-If using GCC/Clang:
+##### If using GCC/Clang:
 * Windows
 ```
 .\build\psammite_sandbox.exe
