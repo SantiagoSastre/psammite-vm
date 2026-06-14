@@ -14,7 +14,7 @@ uint8_t program[] = {
 int main() {
   PsammiteVM* vm = psammite_new();
   if (vm == NULL) {
-    fprintf(stderr, "VM could not be instantiated.");
+    fprintf(stderr, "VM could not be instantiated.\n");
     return 1;
   }
 
