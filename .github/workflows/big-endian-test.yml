@@ -3,22 +3,25 @@ name: Big-endian test
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - "README.md"
+      - "DEVLOG.md"
   pull_request:
     branches: ["main"]
+    paths-ignore:
+      - "README.md"
+      - "DEVLOG.md"
 
 jobs:
   qemu:
     runs-on: ubuntu-latest
     steps:
-    - 
-      name: Checkout code
-      uses: actions/checkout@v6
-    -
-      name: Set up QEMU
-      uses: docker/setup-qemu-action@v4
-    -
-      name: Run an s390x Container
-      run: |
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+      - name: Run an s390x Container
+        run: |
           docker run --rm \
             --platform linux/s390x \
             -v ${{ github.workspace }}:/build_space \
