@@ -59,7 +59,7 @@ Only Clang, GCC, and MSVC are supported when compiling the project due to the us
 * Memory: 64 KB, byte-addressable.
 * Stack: full-descending (grows downwards, points to the last element).
 * ABI rule: Each function (Callee) must  restore the Link Register and Base Pointer of their caller.
-* Program counter: single 64-bit register (PC).
+* Program counter: single 64-bit register (PC). PC-relative offsets are calculated from the next instruction (PC + 4).
 * Integer registers (32x64-bit):
   * R0/ZR is hardwired to 0.
   * R1/SP: Stack Pointer.

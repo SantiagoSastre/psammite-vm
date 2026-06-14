@@ -127,39 +127,6 @@ void psammite_dump(PsammiteVM *vm) {
   printf("--------------------------------------------------------------------------------------------------------------------------------\n");
 }
 
-InternalExitCodes psammite_step(PsammiteVM *vm) {
-    InternalExitCodes code;
-  if (psammite_fetch_to_ir(vm)!=0) {
-    return VM_ERR_GENERIC;
-  }
-  uint32_t instruction = vm->ir;
-  uint8_t opcode = psammite_decode_opcode(instruction);
-  switch (opcode) {
-    case EXECUTE:
-      code = psammite_route_execute(vm, instruction);
-      break;
-    case LDC:
-        code = psammite_ldc(vm, instruction);
-        break;
-    case LDR:
-        code = psammite_ldr(vm, instruction);
-        break;
-    case LD:
-        code = psammite_ld(vm, instruction);
-        break;
-    case SD:
-        code = psammite_sd(vm, instruction);
-        break;
-    case ADDI:
-        code = psammite_addi(vm, instruction);
-        break;
-    default:
-      fprintf(stderr, "Unrecognized Opcode, halting.\n");
-      code = VM_ERR_GENERIC;
-      break;
-  }
-  return code;
-}
 
 int psammite_run(PsammiteVM *vm) {
   InternalExitCodes code = VM_OK;

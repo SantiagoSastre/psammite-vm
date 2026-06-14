@@ -102,7 +102,6 @@ typedef enum {
 
 typedef enum {
   HALT = 0x00,
-  NOP = 0x01,
 } SystemCodes;
 
 typedef enum {
@@ -145,7 +144,6 @@ void psammite_dump(PsammiteVM *vm);
 void psammite_print_registers(PsammiteVM *vm);
 void psammite_print_f_registers(PsammiteVM *vm);
 void psammite_print_memory_window(PsammiteVM *vm);
-InternalExitCodes psammite_step(PsammiteVM *vm);
 int psammite_run(PsammiteVM *vm);
 
 static inline void psammite_write_register(PsammiteVM *vm, uint8_t reg, uint64_t value) {
@@ -203,8 +201,6 @@ static inline InternalExitCodes psammite_system_execute(uint8_t func7) {
   switch (func7) {
     case HALT:
       return VM_HALT;
-    case NOP:
-      return VM_OK;
     default:
       fprintf(stderr, "Unrecognized Function 7 parameter in Execute System instruction, halting.\n");
       return VM_ERR_GENERIC;
@@ -354,6 +350,43 @@ static inline InternalExitCodes psammite_addi(PsammiteVM *vm, uint32_t instructi
 
     return VM_OK;
 
+}
+
+
+
+
+static inline InternalExitCodes psammite_step(PsammiteVM *vm) {
+    InternalExitCodes code;
+  if (psammite_fetch_to_ir(vm)!=0) {
+    return VM_ERR_GENERIC;
+  }
+  uint32_t instruction = vm->ir;
+  uint8_t opcode = psammite_decode_opcode(instruction);
+  switch (opcode) {
+    case EXECUTE:
+      code = psammite_route_execute(vm, instruction);
+      break;
+    case LDC:
+        code = psammite_ldc(vm, instruction);
+        break;
+    case LDR:
+        code = psammite_ldr(vm, instruction);
+        break;
+    case LD:
+        code = psammite_ld(vm, instruction);
+        break;
+    case SD:
+        code = psammite_sd(vm, instruction);
+        break;
+    case ADDI:
+        code = psammite_addi(vm, instruction);
+        break;
+    default:
+      fprintf(stderr, "Unrecognized Opcode, halting.\n");
+      code = VM_ERR_GENERIC;
+      break;
+  }
+  return code;
 }
 
 

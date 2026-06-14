@@ -1,6 +1,9 @@
 #include "psammite.h"
 #include "psammite_asm_macros.h"
+#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 #define VM_ASSERT(condition)                                                   \
   do {                                                                         \
@@ -68,6 +71,7 @@ void test_vm_alu() {
       ASM_MOD(R7, R4, R12),
       ASM_SDIV(R21, R20, R13),
       ASM_SMOD(R21, R20, R14),
+      ASM_ADD(R20, R6, R15),
 
       ASM_HALT
   };
@@ -81,6 +85,79 @@ void test_vm_alu() {
   VM_ASSERT(psammite_read_register(vm,R12) == 0);
   VM_ASSERT(psammite_read_register(vm,R13) == 3);
   VM_ASSERT(psammite_read_register(vm,R14) == 0);
+  VM_ASSERT(psammite_read_register(vm,R15) == 1);
+
+  psammite_free(vm);
+}
+
+void test_vm_ldr() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LDR(R5, 4),
+      ASM_HALT,
+      ASM_64_BIT_CONST(196)
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R5) == 196);
+
+
+  psammite_free(vm);
+}
+
+void test_vm_ldc() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+    ASM_LDC(R5, 0, 0xBAAD),
+    ASM_LDC(R5, 1, 0xCAFE),
+    ASM_LDC(R5, 2, 0xBEEF),
+    ASM_LDC(R5, 3, 0xDEAD),
+    ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R5) == 0xDEADBEEFCAFEBAAD);
+
+
+  psammite_free(vm);
+}
+
+
+void test_vm_ld() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LOADI(R4,8),
+      ASM_LD(R4, R5, 4),
+      ASM_HALT,
+      ASM_64_BIT_CONST(196)
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R5) == 196);
+
+
+  psammite_free(vm);
+}
+
+void test_vm_sd() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LOADI(R4,196),
+      ASM_LOADI(R5, 12),
+      ASM_SD(R4, R5, 4),
+      ASM_HALT,
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int vm_status = psammite_run(vm);
+  uint64_t ram_value;
+  int read_status = psammite_read_memory(vm, 16, &ram_value);
+  VM_ASSERT(vm_status == 0);
+  VM_ASSERT(read_status == 0);
+  VM_ASSERT(ram_value == 196);
+
 
   psammite_free(vm);
 }
@@ -91,5 +168,9 @@ int main() {
   test_vm_endianness();
   test_vm_addi();
   test_vm_alu();
+  test_vm_ldr();
+  test_vm_ldc();
+  test_vm_ld();
+  test_vm_sd();
   return 0;
 }
