@@ -26,7 +26,7 @@ Windows: `.\build\Debug\psammite_vm.exe` if using MSVC, otherwise `.\build\psamm
 
 #### Sandbox
 
-To code in the sandbox first copy the template: **[Template](sandbox/psammite_sandbox_template.c)** into a file in the same folder called `psammite_sandbox.c`. Write your program where indicated in the file. Then run:
+To code in the sandbox first copy the **[template](sandbox/psammite_sandbox_template.c)** into a file in the same folder called `psammite_sandbox.c`. Write your program where indicated in the file. Then run:
 ```
 cmake -S . -B build -DCOMPILE_SANDBOX=true
 cmake --build build
