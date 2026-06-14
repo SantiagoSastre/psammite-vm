@@ -47,27 +47,41 @@ static inline uint8_t psammite_decode_rtype_rd(uint32_t instruction) {
   return (instruction>>11) & 0x1F;
 }
 
-//-------- I1 ------------------------
+//-------- J ------------------------
 
-static inline uint8_t psammite_decode_i1type_rd(uint32_t instruction) {
+static inline uint8_t psammite_decode_jtype_rd(uint32_t instruction) {
   return psammite_decode_25_21(instruction);
 }
-static inline uint32_t psammite_decode_i1type_offset(uint32_t instruction) {
+static inline uint32_t psammite_decode_jtype_offset(uint32_t instruction) {
   return instruction & 0x1FFFFF;
 }
 
-//-------- I2 ------------------------
+//-------- I ------------------------
 
-static inline uint8_t psammite_decode_i2type_rs1(uint32_t instruction) {
+static inline uint8_t psammite_decode_itype_rs(uint32_t instruction) {
   return psammite_decode_25_21(instruction);
 }
 
-static inline uint8_t psammite_decode_i2type_rd(uint32_t instruction) {
+static inline uint8_t psammite_decode_itype_rd(uint32_t instruction) {
   return psammite_decode_20_16(instruction);
 }
-static inline uint16_t psammite_decode_i2type_immediate(uint32_t instruction) {
+static inline uint16_t psammite_decode_itype_immediate(uint32_t instruction) {
   return psammite_decode_15_0(instruction);
 }
+
+//-------- B ------------------------
+
+static inline uint8_t psammite_decode_btype_rs1(uint32_t instruction) {
+  return psammite_decode_25_21(instruction);
+}
+
+static inline uint8_t psammite_decode_btype_rs2(uint32_t instruction) {
+  return psammite_decode_20_16(instruction);
+}
+static inline uint16_t psammite_decode_btype_offset(uint32_t instruction) {
+  return psammite_decode_15_0(instruction);
+}
+
 
 //-------- Chunk ------------------------
 

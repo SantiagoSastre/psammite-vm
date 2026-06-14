@@ -114,3 +114,14 @@ Firstly, I have added macros that make writing assembly for all currently implem
 One architectural choice I hadn't made, was whether any PC relative offset would start from the current instruction or from the next one. Currently the PC is increased in the fetch step, and I consider that best-practice as it avoids code duplication. If I wanted to have offsets relative to the current instruction, substracting one from the PC would be necessary. At least for me, the added convenience isn't worth an additional arithmetic operation in many instructions. Because of that, offsets will be relative to the next instruction.
 
 On another note, the `NOP` instruction has been demoted to a pseudo-instruction that is an alias of `ADDI(ZR,ZR,0)`. Also, the `psammite_step` function has been inlined too to increase performance.
+
+
+## [14/6/26] Some changes, jump and branching
+
+Some quick changes: I have gone ahead and renamed the `I1` layout to `J` and `I2` to just `I`. This is because I realized the `I1` layout was exactly what was needed for the jump instruction layout, so renaming to `J` is much more adequate. Also, because the git commit history was getting cluttered with README and DEVLOG fixes, the project is migrating to a feature branch workflow. A new `B-type` layout has been introduced for branching instructions, it has exactly the same layout as `I-type`, however instead of having `rs` and `rd` fields, they are renamed `rs1` and `rs2` to better showcase intent.
+
+For now unaligned memory access is allowed when reading constants, however, it isn't when performing jump/branching instructions. In that case the address is forcefully aligned because assuming the last two bits are 0 allows Psammite to increase its jump range by two more bits.
+
+Jump and branching instructions have been implemented. The VM has the following jump/branching instructions: `JAL`, `JALR`,`BEQ`, `BNE`, `BLT`, `BGE`, `SBLT`, and `SBGE`. In the macro assembler.The macro assembler also includes pseudo-instructions for operations like Branch Greater Than to make coding easier. With this Psammite becomes Turing complete. I'm super excited about achieving such a milestone.
+
+You may have noticed Psammite heavily resembles RISC-V and MIPS. Indeed I have taken heavy inspiration from them because of their simplicity and speed. However, I don't intend to write an emulator for either of those architectures. Even if similar, Psammite is its own project, and many design decisions have resulted in a VM that is unique and has its own ISA. The project will diverge more as more advanced features are added. The next objectives are logical operations and float support. So stay tuned for that.

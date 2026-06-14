@@ -91,7 +91,15 @@ typedef enum {
   LDR = 0x02,
   LD = 0x03,
   SD = 0x04,
-  ADDI = 0x05
+  ADDI = 0x05,
+  JAL = 0x06,
+  JALR = 0x07,
+  BEQ = 0x08,
+  BNE = 0x09,
+  BLT = 0x10,
+  BGE = 0x11,
+  SBLT = 0x12,
+  SBGE = 0x13,
 } Opcodes;
 
 typedef enum {
@@ -294,8 +302,8 @@ static inline InternalExitCodes psammite_ldc(PsammiteVM *vm, uint32_t instructio
 }
 
 static inline InternalExitCodes psammite_ldr(PsammiteVM *vm, uint32_t instruction) {
-    uint8_t rd = psammite_decode_i1type_rd(instruction);
-    uint32_t offset = psammite_decode_i1type_offset(instruction);
+    uint8_t rd = psammite_decode_jtype_rd(instruction);
+    uint32_t offset = psammite_decode_jtype_offset(instruction);
     int32_t signed_offset = ((int32_t)(offset<<11)) >> 11;
     uint64_t value;
     int code = psammite_read_memory(vm, vm->pc+signed_offset, &value);
@@ -308,11 +316,11 @@ static inline InternalExitCodes psammite_ldr(PsammiteVM *vm, uint32_t instructio
 }
 
 static inline InternalExitCodes psammite_ld(PsammiteVM *vm, uint32_t instruction) {
-    uint8_t rs1 = psammite_decode_i2type_rs1(instruction);
-    uint8_t rd = psammite_decode_i2type_rd(instruction);
-    uint16_t offset = psammite_decode_i2type_immediate(instruction);
+    uint8_t rs = psammite_decode_itype_rs(instruction);
+    uint8_t rd = psammite_decode_itype_rd(instruction);
+    uint16_t offset = psammite_decode_itype_immediate(instruction);
     int16_t signed_offset = (int16_t) offset;
-    uint64_t base_address = psammite_read_register(vm, rs1);
+    uint64_t base_address = psammite_read_register(vm, rs);
     uint64_t final_address = base_address + signed_offset;
     uint64_t value;
     int code = psammite_read_memory(vm, final_address, &value);
@@ -324,9 +332,9 @@ static inline InternalExitCodes psammite_ld(PsammiteVM *vm, uint32_t instruction
 }
 
 static inline InternalExitCodes psammite_sd(PsammiteVM *vm, uint32_t instruction) {
-    uint8_t value_reg = psammite_decode_i2type_rs1(instruction);
-    uint8_t address_reg = psammite_decode_i2type_rd(instruction);
-    uint16_t offset = psammite_decode_i2type_immediate(instruction);
+    uint8_t value_reg = psammite_decode_itype_rs(instruction);
+    uint8_t address_reg = psammite_decode_itype_rd(instruction);
+    uint16_t offset = psammite_decode_itype_immediate(instruction);
     int16_t signed_offset = (int16_t) offset;
     uint64_t base_address = psammite_read_register(vm, address_reg);
     uint64_t final_address = base_address + signed_offset;
@@ -339,11 +347,10 @@ static inline InternalExitCodes psammite_sd(PsammiteVM *vm, uint32_t instruction
 
 }
 
-
 static inline InternalExitCodes psammite_addi(PsammiteVM *vm, uint32_t instruction) {
-    uint8_t value_reg = psammite_decode_i2type_rs1(instruction);
-    uint8_t address_reg = psammite_decode_i2type_rd(instruction);
-    uint16_t immediate = psammite_decode_i2type_immediate(instruction);
+    uint8_t value_reg = psammite_decode_itype_rs(instruction);
+    uint8_t address_reg = psammite_decode_itype_rd(instruction);
+    uint16_t immediate = psammite_decode_itype_immediate(instruction);
     uint64_t value = psammite_read_register(vm, value_reg);
     uint64_t value_plus_immediate = value + (uint64_t) ((int16_t)immediate);
     psammite_write_register(vm, address_reg, value_plus_immediate);
@@ -352,7 +359,111 @@ static inline InternalExitCodes psammite_addi(PsammiteVM *vm, uint32_t instructi
 
 }
 
+static inline InternalExitCodes psammite_jal(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rd = psammite_decode_jtype_rd(instruction);
+    uint32_t offset = psammite_decode_jtype_offset(instruction);
+    int64_t signed_offset = (int64_t)(((int32_t)(offset << 11)) >> 11) * 4;
+    psammite_write_register(vm, rd, vm->pc);
+    vm->pc = (vm->pc + (uint64_t) signed_offset);
 
+    return VM_OK;
+}
+
+static inline InternalExitCodes psammite_jalr(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rs = psammite_decode_itype_rs(instruction);
+    uint8_t rd = psammite_decode_itype_rd(instruction);
+    uint16_t offset = psammite_decode_itype_immediate(instruction);
+    int64_t signed_offset = (int64_t)((int16_t)offset) * 4;
+    uint64_t base_address = psammite_read_register(vm, rs);
+    psammite_write_register(vm, rd, vm->pc);
+    vm->pc = (base_address + (uint64_t) signed_offset) & 0xFFFFFFFFFFFFFFFC;
+
+    return VM_OK;
+}
+
+static inline InternalExitCodes psammite_beq(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rs1 = psammite_decode_btype_rs1(instruction);
+    uint8_t rs2 = psammite_decode_btype_rs2(instruction);
+    uint16_t offset = psammite_decode_btype_offset(instruction);
+    int64_t signed_offset = (int64_t)((int16_t)offset) * 4;
+    uint64_t val1 = psammite_read_register(vm, rs1);
+    uint64_t val2 = psammite_read_register(vm, rs2);
+    if (val1 == val2) {
+        vm->pc = vm->pc + ((uint64_t) signed_offset);
+    }
+
+    return VM_OK;
+}
+
+static inline InternalExitCodes psammite_bne(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rs1 = psammite_decode_btype_rs1(instruction);
+    uint8_t rs2 = psammite_decode_btype_rs2(instruction);
+    uint16_t offset = psammite_decode_btype_offset(instruction);
+    int64_t signed_offset = (int64_t)((int16_t)offset) * 4;
+    uint64_t val1 = psammite_read_register(vm, rs1);
+    uint64_t val2 = psammite_read_register(vm, rs2);
+    if (val1 != val2) {
+        vm->pc = vm->pc + ((uint64_t) signed_offset);
+    }
+
+    return VM_OK;
+}
+
+static inline InternalExitCodes psammite_blt(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rs1 = psammite_decode_btype_rs1(instruction);
+    uint8_t rs2 = psammite_decode_btype_rs2(instruction);
+    uint16_t offset = psammite_decode_btype_offset(instruction);
+    int64_t signed_offset = (int64_t)((int16_t)offset) * 4;
+    uint64_t val1 = psammite_read_register(vm, rs1);
+    uint64_t val2 = psammite_read_register(vm, rs2);
+    if (val1 < val2) {
+        vm->pc = vm->pc + ((uint64_t) signed_offset);
+    }
+
+    return VM_OK;
+}
+
+static inline InternalExitCodes psammite_bge(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rs1 = psammite_decode_btype_rs1(instruction);
+    uint8_t rs2 = psammite_decode_btype_rs2(instruction);
+    uint16_t offset = psammite_decode_btype_offset(instruction);
+    int64_t signed_offset = (int64_t)((int16_t)offset) * 4;
+    uint64_t val1 = psammite_read_register(vm, rs1);
+    uint64_t val2 = psammite_read_register(vm, rs2);
+    if (val1 >= val2) {
+        vm->pc = vm->pc + ((uint64_t) signed_offset);
+    }
+
+    return VM_OK;
+}
+
+static inline InternalExitCodes psammite_sblt(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rs1 = psammite_decode_btype_rs1(instruction);
+    uint8_t rs2 = psammite_decode_btype_rs2(instruction);
+    uint16_t offset = psammite_decode_btype_offset(instruction);
+    int64_t signed_offset = (int64_t)((int16_t)offset) * 4;
+    int64_t val1 = (int64_t) psammite_read_register(vm, rs1);
+    int64_t val2 = (int64_t) psammite_read_register(vm, rs2);
+    if (val1 < val2) {
+        vm->pc = vm->pc + ((uint64_t) signed_offset);
+    }
+
+    return VM_OK;
+}
+
+static inline InternalExitCodes psammite_sbge(PsammiteVM *vm, uint32_t instruction) {
+    uint8_t rs1 = psammite_decode_btype_rs1(instruction);
+    uint8_t rs2 = psammite_decode_btype_rs2(instruction);
+    uint16_t offset = psammite_decode_btype_offset(instruction);
+    int64_t signed_offset = (int64_t)((int16_t)offset) * 4;
+    int64_t val1 = (int64_t) psammite_read_register(vm, rs1);
+    int64_t val2 = (int64_t) psammite_read_register(vm, rs2);
+    if (val1 >= val2) {
+        vm->pc = vm->pc + ((uint64_t) signed_offset);
+    }
+
+    return VM_OK;
+}
 
 
 static inline InternalExitCodes psammite_step(PsammiteVM *vm) {
@@ -380,6 +491,30 @@ static inline InternalExitCodes psammite_step(PsammiteVM *vm) {
         break;
     case ADDI:
         code = psammite_addi(vm, instruction);
+        break;
+    case JAL:
+        code = psammite_jal(vm, instruction);
+        break;
+    case JALR:
+        code = psammite_jalr(vm, instruction);
+        break;
+    case BEQ:
+        code = psammite_beq(vm, instruction);
+        break;
+    case BNE:
+        code = psammite_bne(vm, instruction);
+        break;
+    case BLT:
+        code = psammite_blt(vm, instruction);
+        break;
+    case BGE:
+        code = psammite_bge(vm, instruction);
+        break;
+    case SBLT:
+        code = psammite_sblt(vm, instruction);
+        break;
+    case SBGE:
+        code = psammite_sbge(vm, instruction);
         break;
     default:
       fprintf(stderr, "Unrecognized Opcode, halting.\n");
