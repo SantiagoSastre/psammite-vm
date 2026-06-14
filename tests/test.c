@@ -22,8 +22,6 @@ void test_vm_initialization() {
   psammite_free(vm);
 }
 
-
-
 void test_vm_endianness() {
   PsammiteVM *vm = psammite_new();
   vm->_memory[0] = 0xDD;
@@ -35,8 +33,6 @@ void test_vm_endianness() {
   VM_ASSERT(vm->ir == 0xAABBCCDD);
   psammite_free(vm);
 }
-
-
 
 void test_vm_addi() {
   PsammiteVM *vm = psammite_new();
@@ -53,7 +49,6 @@ void test_vm_addi() {
 
   psammite_free(vm);
 }
-
 
 void test_vm_alu() {
   PsammiteVM *vm = psammite_new();
@@ -122,7 +117,6 @@ void test_vm_ldc() {
   psammite_free(vm);
 }
 
-
 void test_vm_ld() {
   PsammiteVM *vm = psammite_new();
   uint8_t program[] = {
@@ -176,7 +170,6 @@ void test_vm_jal() {
   psammite_free(vm);
 }
 
-
 void test_vm_jalr() {
   PsammiteVM *vm = psammite_new();
   uint8_t program[] = {
@@ -196,6 +189,147 @@ void test_vm_jalr() {
   psammite_free(vm);
 }
 
+void test_vm_beq() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LOADI(R6, 8),
+      ASM_LOADI(R7, 8),
+      ASM_LOADI(R8, 9),
+      ASM_BEQ(R8, R6, 4),
+      ASM_BEQ(R6, R7, 4),
+      ASM_HALT,
+      ASM_LOADI(R10, 2),
+      ASM_HALT
+
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R10) == 2);
+
+
+  psammite_free(vm);
+}
+
+void test_vm_bne() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LOADI(R6, 8),
+      ASM_LOADI(R7, 8),
+      ASM_LOADI(R8, 9),
+      ASM_BNE(R7, R6, 4),
+      ASM_BNE(R6, R8, 4),
+      ASM_HALT,
+      ASM_LOADI(R10, 2),
+      ASM_HALT
+
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R10) == 2);
+
+
+  psammite_free(vm);
+}
+
+void test_vm_blt() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LOADI(R6, 8),
+      ASM_LOADI(R7, 8),
+      ASM_LOADI(R8, 9),
+      ASM_BLT(R6, R7, 4),
+      ASM_BLT(R7, R8, 4),
+      ASM_HALT,
+      ASM_LOADI(R10, 2),
+      ASM_HALT
+
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R10) == 2);
+
+
+  psammite_free(vm);
+}
+
+void test_vm_bge() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LOADI(R6, 8),
+      ASM_LOADI(R7, 8),
+      ASM_LOADI(R8, 9),
+      ASM_BGE(R7, R8, 4),
+      ASM_BGE(R6, R7, 4),
+      ASM_HALT,
+      ASM_LOADI(R10, 2),
+      ASM_BGE(R8, R6, 4),
+      ASM_HALT,
+      ASM_LOADI(R11, 4),
+      ASM_HALT
+
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R10) == 2);
+  VM_ASSERT(psammite_read_register(vm,R11) == 4);
+
+
+  psammite_free(vm);
+}
+
+void test_vm_sblt() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LOADI(R6, -4),
+      ASM_LOADI(R7, -4),
+      ASM_LOADI(R8, 4),
+      ASM_SBLT(R6, R7, 4),
+      ASM_SBLT(R7, R8, 4),
+      ASM_HALT,
+      ASM_LOADI(R10, 2),
+      ASM_HALT
+
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R10) == 2);
+
+
+  psammite_free(vm);
+}
+
+void test_vm_sbge() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LOADI(R6, -4),
+      ASM_LOADI(R7, -4),
+      ASM_LOADI(R8, 4),
+      ASM_SBGE(R7, R8, 4),
+      ASM_SBGE(R6, R7, 4),
+      ASM_HALT,
+      ASM_LOADI(R10, 2),
+      ASM_SBGE(R8, R6, 4),
+      ASM_HALT,
+      ASM_LOADI(R11, 4),
+      ASM_HALT
+
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R10) == 2);
+  VM_ASSERT(psammite_read_register(vm,R11) == 4);
+
+
+  psammite_free(vm);
+}
+
+
 int main() {
   test_vm_initialization();
   test_vm_endianness();
@@ -207,5 +341,11 @@ int main() {
   test_vm_sd();
   test_vm_jal();
   test_vm_jalr();
+  test_vm_beq();
+  test_vm_bne();
+  test_vm_blt();
+  test_vm_bge();
+  test_vm_sblt();
+  test_vm_sbge();
   return 0;
 }

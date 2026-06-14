@@ -69,6 +69,20 @@ static inline uint16_t psammite_decode_itype_immediate(uint32_t instruction) {
   return psammite_decode_15_0(instruction);
 }
 
+//-------- B ------------------------
+
+static inline uint8_t psammite_decode_btype_rs1(uint32_t instruction) {
+  return psammite_decode_25_21(instruction);
+}
+
+static inline uint8_t psammite_decode_btype_rs2(uint32_t instruction) {
+  return psammite_decode_20_16(instruction);
+}
+static inline uint16_t psammite_decode_btype_offset(uint32_t instruction) {
+  return psammite_decode_15_0(instruction);
+}
+
+
 //-------- Chunk ------------------------
 
 static inline uint8_t psammite_decode_chunk_rd(uint32_t instruction) {

@@ -23,6 +23,12 @@
     (uint8_t) ((((rs) >> 3) & 0x03) | (((opcode) & 0x3F) << 2))
 
 
+    #define B_ENCODER(opcode, rs, rd, immediate) \
+        (uint8_t) ((immediate) & 0xFF), \
+        (uint8_t) (((immediate) >> 8) & 0xFF), \
+        (uint8_t) (((rd) & 0x1F) | (((rs) & 0x07)<<5)), \
+        (uint8_t) ((((rs) >> 3) & 0x03) | (((opcode) & 0x3F) << 2))
+
 #define R_ENCODER(opcode, rs1, rs2, rd, func4, func7) \
     (uint8_t) (((func7) & 0x7F) | (((func4) & 0x1)<<7) ), \
     (uint8_t) ((((func4) >> 1) & 0x07) | (((rd) & 0x1F) << 3 ) ), \
@@ -60,8 +66,27 @@
 #define ASM_ADDI(rs,rd,immediate) I_ENCODER(ADDI,rs,rd,immediate)
 #define ASM_LOADI(rd,immediate) I_ENCODER(ADDI,ZR,rd,immediate) // pseudo-instruction
 
-#define ASM_JAL(rd, immediate) J_ENCODER(JAL, rd, immediate)
-#define ASM_J(immediate) J_ENCODER(JAL, ZR, immediate)  // pseudo-instruction
-#define ASM_JALR(rs, rd, immediate) I_ENCODER(JALR, rs, rd, immediate)
+#define ASM_JAL(rd, immediate) J_ENCODER(JAL, rd, (immediate) >> 2)
+#define ASM_J(immediate) J_ENCODER(JAL, ZR, (immediate) >> 2)  // pseudo-instruction
+#define ASM_JALR(rs, rd, immediate) I_ENCODER(JALR, rs, rd, (immediate) >> 2)
+
+#define ASM_BEQ(rs1,rs2,offset) B_ENCODER(BEQ, rs1, rs2, (offset) >> 2)
+#define ASM_BNE(rs1,rs2,offset) B_ENCODER(BNE, rs1, rs2, (offset) >> 2)
+#define ASM_BLT(rs1,rs2,offset) B_ENCODER(BLT, rs1, rs2, (offset) >> 2)
+#define ASM_BGT(rs1,rs2,offset) B_ENCODER(BLT, rs2, rs1, (offset) >> 2) // pseudo-instruction
+#define ASM_BGE(rs1,rs2,offset) B_ENCODER(BGE, rs1, rs2, (offset) >> 2)
+#define ASM_BLE(rs1,rs2,offset) B_ENCODER(BGE, rs2, rs1, (offset) >> 2) // pseudo-instruction
+#define ASM_SBLT(rs1,rs2,offset) B_ENCODER(SBLT, rs1, rs2, (offset) >> 2)
+#define ASM_SBGT(rs1,rs2,offset) B_ENCODER(SBLT, rs2, rs1, (offset) >> 2) // pseudo-instruction
+#define ASM_SBGE(rs1,rs2,offset) B_ENCODER(SBGE, rs1, rs2, (offset) >> 2)
+#define ASM_SBLE(rs1,rs2,offset) B_ENCODER(SBGE, rs2, rs1, (offset) >> 2) // pseudo-instruction
+
+
+#define ASM_BEQZ(rs1,offset) B_ENCODER(BEQ, rs1, ZR, (offset) >> 2) // pseudo-instruction
+#define ASM_BNEZ(rs1,offset) B_ENCODER(BNE, rs1, ZR, (offset) >> 2) // pseudo-instruction
+#define ASM_SBLTZ(rs1,offset) B_ENCODER(SBLT, rs1, ZR, (offset) >> 2) // pseudo-instruction
+#define ASM_SBGTZ(rs1,offset) B_ENCODER(SBLT, ZR, rs1, (offset) >> 2) // pseudo-instruction
+#define ASM_SBGEZ(rs1,offset) B_ENCODER(SBGE, rs1, ZR, (offset) >> 2) // pseudo-instruction
+#define ASM_SBLEZ(rs1,offset) B_ENCODER(SBGE, ZR, rs1, (offset) >> 2) // pseudo-instruction
 
 #endif
