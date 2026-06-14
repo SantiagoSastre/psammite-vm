@@ -34,7 +34,7 @@ target_link_libraries(psammite_vm_test PRIVATE psammite_vm_lib psammite_compiler
 add_test(NAME psammite_tests COMMAND psammite_vm_test)
 
 if (COMPILE_SANDBOX)
-    message(STATUS "Enabling sandbox...")
+    message(STATUS "Sandbox enabled")
     add_executable(psammite_sandbox  sandbox/psammite_sandbox.c)
     target_link_libraries(psammite_sandbox PRIVATE psammite_compiler_config psammite_vm_lib)
 endif()
