@@ -125,3 +125,13 @@ For now unaligned memory access is allowed when reading constants, however, it i
 Jump and branching instructions have been implemented. The VM has the following jump/branching instructions: `JAL`, `JALR`,`BEQ`, `BNE`, `BLT`, `BGE`, `SBLT`, and `SBGE`. In the macro assembler.The macro assembler also includes pseudo-instructions for operations like Branch Greater Than to make coding easier. With this Psammite becomes Turing complete. I'm super excited about achieving such a milestone.
 
 You may have noticed Psammite heavily resembles RISC-V and MIPS. Indeed I have taken heavy inspiration from them because of their simplicity and speed. However, I don't intend to write an emulator for either of those architectures. Even if similar, Psammite is its own project, and many design decisions have resulted in a VM that is unique and has its own ISA. The project will diverge more as more advanced features are added. The next objectives are logical operations and float support. So stay tuned for that.
+
+## [19/6/26] More unit-tests, more pseudo-instructions, and layout changes
+
+First, additional unit tests were added.
+
+Second, the chunk instruction encoding was improved. The `LDC` instruction now has a `zero_flag` bit: when set, the target register is cleared before the 16-bit chunk is inserted. Two assembler macros were added to keep assembly simple.
+* `LDC`: Preserves existing chunks (`zero_flag` = 0)
+* `LDCZ`: Zeroes register first, then inserts chunk (`zero_flag` = 1)
+
+`LOADI` has been replaced by `LI` and `SLI`, which expand to `LDCZ` and `ADDI`.

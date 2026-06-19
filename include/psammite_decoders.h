@@ -93,6 +93,10 @@ static inline uint8_t psammite_decode_chunk_selector(uint32_t instruction) {
   return (instruction>>19) & 0x3;
 }
 
+static inline uint8_t psammite_decode_chunk_zero_flag(uint32_t instruction) {
+  return (instruction>>18) & 0x1;
+}
+
 static inline uint16_t psammite_decode_chunk_immediate(uint32_t instruction) {
   return psammite_decode_15_0(instruction);
 }

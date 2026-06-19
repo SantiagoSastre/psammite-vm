@@ -291,12 +291,19 @@ static inline InternalExitCodes psammite_route_execute(PsammiteVM *vm, uint32_t 
 static inline InternalExitCodes psammite_ldc(PsammiteVM *vm, uint32_t instruction) {
   uint8_t rd = psammite_decode_chunk_rd(instruction);
   uint8_t chunk_selector = psammite_decode_chunk_selector(instruction);
+  uint8_t zero_flag = psammite_decode_chunk_zero_flag(instruction);
   uint16_t immediate = psammite_decode_chunk_immediate(instruction);
-  uint64_t val = psammite_read_register(vm, rd);
-  uint64_t mask = ~(((uint64_t)0xFFFF)<<(16*chunk_selector));
-  uint64_t masked_val = val & mask;
+  uint64_t new_val;
   uint64_t immediate_at_chunk = ((uint64_t)immediate)<<(16*chunk_selector);
-  uint64_t new_val = immediate_at_chunk | masked_val;
+  if (zero_flag) {
+      new_val = immediate_at_chunk;
+  } else {
+    uint64_t val = psammite_read_register(vm, rd);
+    uint64_t mask = ~(((uint64_t)0xFFFF)<<(16*chunk_selector));
+    uint64_t masked_val = val & mask;
+
+    new_val = immediate_at_chunk | masked_val;
+  }
   psammite_write_register(vm, rd, new_val);
   return VM_OK;
 }
