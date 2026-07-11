@@ -2,6 +2,10 @@
 #define PSAMMITE_HEADER
 
 
+// Psammite uses arithmetic right shift for sign-extending immediate offsets.
+#if ((-1 >> 1) != -1)
+# error Psammite requires arithmetic right shift on signed integers
+#endif
 
 #include "psammite_core.h"
 #include "psammite_status_codes.h"
