@@ -1,5 +1,3 @@
-#include <stdint.h>
-#include <stdio.h>
 #include "psammite.h"
 #include "psammite_asm_macros.h"
 

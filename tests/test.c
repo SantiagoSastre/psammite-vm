@@ -1,9 +1,9 @@
+#include <stdlib.h>
+
+
 #include "psammite.h"
 #include "psammite_asm_macros.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <inttypes.h>
+
 
 #define VM_ASSERT(condition)                                                   \
   do {                                                                         \
