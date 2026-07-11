@@ -38,6 +38,9 @@ static inline void psammite_write_register(PsammiteVM *vm, uint8_t reg, uint64_t
     }
 }
 
+static inline void psammite_write_f_register(PsammiteVM *vm, uint8_t reg, PsammiteFloat value) {
+    vm->_f_registers[reg] = value;
+}
 
 static inline uint64_t psammite_read_register(PsammiteVM *vm, uint8_t reg) {
     return vm->_registers[reg];
