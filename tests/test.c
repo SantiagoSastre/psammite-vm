@@ -37,7 +37,7 @@ void test_vm_endianness() {
 void test_vm_addi() {
   PsammiteVM *vm = psammite_new();
   uint8_t program[] = {
-      ASM_LI(R4, 3), // LOADI is an alias for ADDI with its rs set to ZR
+      ASM_ADDI(ZR,R4,3),
       ASM_ADDI(R4, R5, 14),
       ASM_HALT
   };
@@ -363,6 +363,51 @@ void test_vm_sbge() {
 }
 
 
+void test_vm_slt() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 3),
+      ASM_LI(R5, 4),
+      ASM_SLT(R4,R5,R6),
+      ASM_SLT(R5,R4,R7),
+      ASM_LI(R8, 3),
+      ASM_SLT(R8,R4,R9),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 1);
+  VM_ASSERT(psammite_read_register(vm,R7) == 0);
+  VM_ASSERT(psammite_read_register(vm,R9) == 0);
+
+  psammite_free(vm);
+}
+
+void test_vm_sslt() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_SLI(R4, -3),
+      ASM_SLI(R5, -4),
+      ASM_SSLT(R4,R5,R6),
+      ASM_SSLT(R5,R4,R7),
+      ASM_LI(R8, 3),
+      ASM_SSLT(R8,R4,R9),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 0);
+  VM_ASSERT(psammite_read_register(vm,R7) == 1);
+  VM_ASSERT(psammite_read_register(vm,R9) == 0);
+
+  psammite_free(vm);
+}
+
+
+
+
 int main() {
   test_vm_initialization();
   test_vm_endianness();
@@ -382,5 +427,6 @@ int main() {
   test_vm_bge();
   test_vm_sblt();
   test_vm_sbge();
+  test_vm_slt();
   return 0;
 }

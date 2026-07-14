@@ -59,6 +59,10 @@
 #define ASM_SDIV(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SDIV)
 #define ASM_SMOD(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SMOD)
 
+#define ASM_SLT(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SLT)
+#define ASM_SSLT(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SSLT)
+
+
 #define ASM_LDC(rd, chunk, immediate) CHUNK_ENCODER(LDC, rd, chunk, 0 ,immediate)
 #define ASM_LDCZ(rd, chunk, immediate) CHUNK_ENCODER(LDC, rd, chunk, 1 ,immediate)
 
