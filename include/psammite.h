@@ -7,14 +7,14 @@
 # error Psammite requires arithmetic right shift on signed integers
 #endif
 
-#include "psammite_core.h"
-#include "psammite_status_codes.h"
-#include "psammite_opcodes.h"
-#include "psammite_execute_instructions.h"
-#include "psammite_load_store_instructions.h"
-#include "psammite_jump_instructions.h"
-#include "psammite_branch_instructions.h"
-#include "psammite_immediate_instructions.h"
+#include "core.h"
+#include "status_codes.h"
+#include "opcodes.h"
+#include "execute/execute_router.h"
+#include "load_store.h"
+#include "jump.h"
+#include "branch.h"
+#include "immediate.h"
 
 
 

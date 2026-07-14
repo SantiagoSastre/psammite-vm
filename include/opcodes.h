@@ -12,10 +12,10 @@ typedef enum {
   JALR = 0x07,
   BEQ = 0x08,
   BNE = 0x09,
-  BLT = 0x10,
-  BGE = 0x11,
-  SBLT = 0x12,
-  SBGE = 0x13,
+  BLT = 0x0A,
+  BGE = 0x0B,
+  SBLT = 0x0C,
+  SBGE = 0x0D,
 } Opcodes;
 
 typedef enum {
@@ -38,7 +38,9 @@ typedef enum {
   SMOD = 0x06,
   AND = 0x07,
   OR = 0x08,
-  XOR = 0x09
+  XOR = 0x09,
+  SLT = 0x0A,
+  SSLT = 0x0B
 } IMathCodes;
 
 #endif

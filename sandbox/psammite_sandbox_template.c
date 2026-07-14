@@ -1,5 +1,5 @@
 #include "psammite.h"
-#include "psammite_asm_macros.h"
+#include "asm_macros.h"
 
 // Copy this file into a new file called psammite_sandbox.c
 

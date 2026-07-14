@@ -7,8 +7,8 @@
 
 
 
-#include "psammite_registers.h"
-#include "psammite_endian.h"
+#include "registers.h"
+#include "endian.h"
 
 
 

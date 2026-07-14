@@ -2,7 +2,7 @@
 
 
 #include "psammite.h"
-#include "psammite_asm_macros.h"
+#include "asm_macros.h"
 
 
 #define VM_ASSERT(condition)                                                   \

@@ -2,9 +2,9 @@
 #define PSAMMITE_IMMEDIATE_INSTRUCTIONS_HEADER
 
 
-#include "psammite_core.h"
-#include "psammite_decoders.h"
-#include "psammite_status_codes.h"
+#include "core.h"
+#include "decoders.h"
+#include "status_codes.h"
 
 static inline InternalExitCodes psammite_addi(PsammiteVM *vm, uint32_t instruction) {
     uint8_t src_reg = psammite_decode_itype_rs(instruction);

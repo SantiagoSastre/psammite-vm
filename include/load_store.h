@@ -2,9 +2,9 @@
 #define PSAMMITE_LOAD_STORE_INSTRUCTIONS_HEADER
 
 
-#include "psammite_core.h"
-#include "psammite_decoders.h"
-#include "psammite_status_codes.h"
+#include "core.h"
+#include "decoders.h"
+#include "status_codes.h"
 
 
 
