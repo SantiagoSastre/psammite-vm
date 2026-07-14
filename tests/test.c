@@ -406,6 +406,99 @@ void test_vm_sslt() {
 }
 
 
+void test_vm_and() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0xA),
+      ASM_LI(R5, 0x8),
+      ASM_AND(R4,R5,R6),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 0x8);
+
+  psammite_free(vm);
+}
+
+void test_vm_or() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0xA),
+      ASM_LI(R5, 0x8),
+      ASM_OR(R4,R5,R6),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 0xA);
+
+  psammite_free(vm);
+}
+
+void test_vm_xor() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0xA),
+      ASM_LI(R5, 0x8),
+      ASM_XOR(R4,R5,R6),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 0x2);
+
+  psammite_free(vm);
+}
+
+void test_vm_andi() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0xA),
+      ASM_ANDI(R4,R5,0x8),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R5) == 0x8);
+
+  psammite_free(vm);
+}
+
+void test_vm_ori() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0xA),
+      ASM_ORI(R4,R5,0x8),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R5) == 0xA);
+
+  psammite_free(vm);
+}
+
+void test_vm_xori() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0xA),
+      ASM_XORI(R4,R5,0x8),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R5) == 0x2);
+
+  psammite_free(vm);
+}
+
 
 
 int main() {
@@ -428,5 +521,12 @@ int main() {
   test_vm_sblt();
   test_vm_sbge();
   test_vm_slt();
+  test_vm_sslt();
+  test_vm_and();
+  test_vm_or();
+  test_vm_xor();
+  test_vm_andi();
+  test_vm_ori();
+  test_vm_xori();
   return 0;
 }

@@ -16,6 +16,9 @@ typedef enum {
   BGE = 0x0B,
   SBLT = 0x0C,
   SBGE = 0x0D,
+  ANDI = 0x0E,
+  ORI = 0x0F,
+  XORI = 0x10,
 } Opcodes;
 
 typedef enum {
