@@ -428,5 +428,6 @@ int main() {
   test_vm_sblt();
   test_vm_sbge();
   test_vm_slt();
+  test_vm_sslt();
   return 0;
 }
