@@ -63,6 +63,11 @@
 #define ASM_SSLT(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SSLT)
 
 
+#define ASM_AND(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,AND)
+#define ASM_OR(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,OR)
+#define ASM_XOR(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,XOR)
+
+
 #define ASM_LDC(rd, chunk, immediate) CHUNK_ENCODER(LDC, rd, chunk, 0 ,immediate)
 #define ASM_LDCZ(rd, chunk, immediate) CHUNK_ENCODER(LDC, rd, chunk, 1 ,immediate)
 
@@ -71,6 +76,13 @@
 #define ASM_SD(rs, rmemd, offset) I_ENCODER(SD, rs, rmemd, offset)
 
 #define ASM_ADDI(rs,rd,immediate) I_ENCODER(ADDI,rs,rd,immediate)
+#define ASM_ANDI(rs,rd,immediate) I_ENCODER(ANDI,rs,rd,immediate)
+#define ASM_ORI(rs,rd,immediate) I_ENCODER(ORI,rs,rd,immediate)
+#define ASM_XORI(rs,rd,immediate) I_ENCODER(XORI,rs,rd,immediate)
+#define ASM_NOT(rs,rd) I_ENCODER(XORI,rs,rd,-1) // pseudo-instruction
+
+
+
 #define ASM_MOV(rs,rd) I_ENCODER(ADDI,rs,rd,0) // pseudo-instruction
 #define ASM_LI(rd,immediate) CHUNK_ENCODER(LDC, rd, 0, 1 ,immediate) // pseudo-instruction
 #define ASM_SLI(rd,immediate) I_ENCODER(ADDI,ZR,rd,immediate) // pseudo-instruction
@@ -90,7 +102,6 @@
 #define ASM_SBGE(rs1,rs2,offset) B_ENCODER(SBGE, rs1, rs2, (offset) >> 2)
 #define ASM_SBLE(rs1,rs2,offset) B_ENCODER(SBGE, rs2, rs1, (offset) >> 2) // pseudo-instruction
 
-#define ASM_MOV(rs,rd) I_ENCODER(ADDI,rs,rd,0)
 #define ASM_BEQZ(rs1,offset) B_ENCODER(BEQ, rs1, ZR, (offset) >> 2) // pseudo-instruction
 #define ASM_BNEZ(rs1,offset) B_ENCODER(BNE, rs1, ZR, (offset) >> 2) // pseudo-instruction
 #define ASM_SBLTZ(rs1,offset) B_ENCODER(SBLT, rs1, ZR, (offset) >> 2) // pseudo-instruction

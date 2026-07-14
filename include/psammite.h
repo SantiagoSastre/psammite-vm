@@ -72,6 +72,15 @@ static inline InternalExitCodes psammite_step(PsammiteVM *vm) {
     case ADDI:
         code = psammite_addi(vm, instruction);
         break;
+    case ANDI:
+        code = psammite_andi(vm, instruction);
+        break;
+    case ORI:
+        code = psammite_ori(vm, instruction);
+        break;
+    case XORI:
+        code = psammite_xori(vm, instruction);
+        break;
     case JAL:
         code = psammite_jal(vm, instruction);
         break;

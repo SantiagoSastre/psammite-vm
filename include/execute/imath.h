@@ -56,6 +56,15 @@ static inline InternalExitCodes psammite_imath_execute(PsammiteVM *vm, uint8_t f
           psammite_write_register(vm, rd, (uint64_t)((int64_t)val1 % (int64_t)val2));
       }
       return VM_OK;
+    case AND:
+      psammite_write_register(vm, rd, val1 & val2);
+      return VM_OK;
+    case OR:
+      psammite_write_register(vm, rd, val1 | val2);
+      return VM_OK;
+    case XOR:
+      psammite_write_register(vm, rd, val1 ^ val2);
+      return VM_OK;
     case SLT:
       if (val1 < val2) {
         psammite_write_register(vm, rd, 1);
