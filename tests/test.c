@@ -499,7 +499,120 @@ void test_vm_xori() {
   psammite_free(vm);
 }
 
+void test_vm_sll() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0x5),
+      ASM_LI(R5, 1),
+      ASM_SLL(R4,R5,R6),
+      ASM_LI(R8, 64),
+      ASM_SLL(R4,R8,R7),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 0xa);
+  VM_ASSERT(psammite_read_register(vm, R7) == 0x5);
 
+  psammite_free(vm);
+}
+
+void test_vm_srl() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0x5),
+      ASM_LI(R5, 1),
+      ASM_SRL(R4,R5,R6),
+      ASM_LI(R8, 64),
+      ASM_SRL(R4,R8,R7),
+      ASM_SRL(R4, ZR, R4),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 0x2);
+  VM_ASSERT(psammite_read_register(vm, R7) == 0x5);
+  VM_ASSERT(psammite_read_register(vm,R4) == 0x5);
+
+
+  psammite_free(vm);
+}
+
+
+void test_vm_sra() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_SLI(R4, -8), // 0xfffffffffffffff8
+      ASM_LI(R5, 1),
+      ASM_SRA(R4,R5,R6),
+
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 0xFFFFFFFFFFFFFFFC);
+
+
+  psammite_free(vm);
+}
+
+void test_vm_slli() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0x5),
+      ASM_SLLI(R4,R5,1),
+      ASM_SLLI(R4,R6,64),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R5) == 0xa);
+  VM_ASSERT(psammite_read_register(vm, R6) == 0x5);
+
+  psammite_free(vm);
+}
+
+void test_vm_srli() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_LI(R4, 0x5),
+      ASM_SRLI(R4,R6,1),
+      ASM_SRLI(R4,R7,64),
+      ASM_SRLI(R4,R4,0),
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 0x2);
+  VM_ASSERT(psammite_read_register(vm, R7) == 0x5);
+  VM_ASSERT(psammite_read_register(vm,R4) == 0x5);
+
+
+  psammite_free(vm);
+}
+
+
+void test_vm_srai() {
+  PsammiteVM *vm = psammite_new();
+  uint8_t program[] = {
+      ASM_SLI(R4, -8), // 0xfffffffffffffff8
+      ASM_SRAI(R4,R6,1),
+
+      ASM_HALT
+  };
+  psammite_load_program(vm, program, sizeof(program));
+  int status = psammite_run(vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(vm,R6) == 0xFFFFFFFFFFFFFFFC);
+
+
+  psammite_free(vm);
+}
 
 int main() {
   test_vm_initialization();
@@ -528,5 +641,12 @@ int main() {
   test_vm_andi();
   test_vm_ori();
   test_vm_xori();
+  test_vm_sll();
+  test_vm_srl();
+  test_vm_sra();
+  test_vm_slli();
+  test_vm_srli();
+  test_vm_srai();
+
   return 0;
 }

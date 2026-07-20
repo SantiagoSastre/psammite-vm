@@ -19,6 +19,9 @@ typedef enum {
   ANDI = 0x0E,
   ORI = 0x0F,
   XORI = 0x10,
+  SLLI = 0x11,
+  SRLI = 0x12,
+  SRAI = 0x13
 } Opcodes;
 
 typedef enum {
@@ -43,7 +46,11 @@ typedef enum {
   OR = 0x08,
   XOR = 0x09,
   SLT = 0x0A,
-  SSLT = 0x0B
+  SSLT = 0x0B,
+  SLL = 0x0C,
+  SRL = 0x0D,
+  SRA = 0x0E
+
 } IMathCodes;
 
 #endif

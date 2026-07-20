@@ -69,6 +69,13 @@ static inline uint16_t psammite_decode_itype_immediate(uint32_t instruction) {
   return psammite_decode_15_0(instruction);
 }
 
+static inline void psammite_decode_itype(uint32_t instruction, uint8_t* rs, uint8_t* rd, uint16_t* imm) {
+  *rs = psammite_decode_itype_rs(instruction);
+  *rd = psammite_decode_itype_rd(instruction);
+  *imm = psammite_decode_itype_immediate(instruction);
+
+}
+
 //-------- B ------------------------
 
 static inline uint8_t psammite_decode_btype_rs1(uint32_t instruction) {

@@ -67,6 +67,9 @@
 #define ASM_OR(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,OR)
 #define ASM_XOR(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,XOR)
 
+#define ASM_SLL(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SLL)
+#define ASM_SRL(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SRL)
+#define ASM_SRA(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SRA)
 
 #define ASM_LDC(rd, chunk, immediate) CHUNK_ENCODER(LDC, rd, chunk, 0 ,immediate)
 #define ASM_LDCZ(rd, chunk, immediate) CHUNK_ENCODER(LDC, rd, chunk, 1 ,immediate)
@@ -80,6 +83,11 @@
 #define ASM_ORI(rs,rd,immediate) I_ENCODER(ORI,rs,rd,immediate)
 #define ASM_XORI(rs,rd,immediate) I_ENCODER(XORI,rs,rd,immediate)
 #define ASM_NOT(rs,rd) I_ENCODER(XORI,rs,rd,-1) // pseudo-instruction
+#define ASM_SLLI(rs,rd,immediate) I_ENCODER(SLLI,rs,rd,immediate)
+#define ASM_SRLI(rs,rd,immediate) I_ENCODER(SRLI,rs,rd,immediate)
+#define ASM_SRAI(rs,rd,immediate) I_ENCODER(SRAI,rs,rd,immediate)
+
+
 
 
 
