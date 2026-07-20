@@ -79,6 +79,15 @@ static inline InternalExitCodes psammite_imath_execute(PsammiteVM *vm, uint8_t f
         psammite_write_register(vm, rd, 0);
       }
       return VM_OK;
+    case SLL:
+      psammite_write_register(vm, rd,  val1 << (val2 & 0x3F));
+      return VM_OK;
+    case SRL:
+      psammite_write_register(vm, rd,  val1 >> (val2 & 0x3F));
+      return VM_OK;
+    case SRA:
+      psammite_write_register(vm, rd,  (uint64_t)(( (int64_t)val1) >> (val2 & 0x3F)));
+      return VM_OK;
     default:
       fprintf(stderr, "Unrecognized Function 7 parameter in Execute IMath instruction, halting.\n");
       return VM_ERR_GENERIC;
