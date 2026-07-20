@@ -71,12 +71,12 @@
 #define ASM_SRL(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SRL)
 #define ASM_SRA(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,SRA)
 
-#define ASM_LDC(rd, chunk, immediate) CHUNK_ENCODER(LDC, rd, chunk, 0 ,immediate)
-#define ASM_LDCZ(rd, chunk, immediate) CHUNK_ENCODER(LDC, rd, chunk, 1 ,immediate)
+#define ASM_AC(rd, chunk, immediate) CHUNK_ENCODER(AC, rd, chunk, 0 ,immediate)
+#define ASM_ACZ(rd, chunk, immediate) CHUNK_ENCODER(AC, rd, chunk, 1 ,immediate)
 
-#define ASM_LDR(rs, immediate) J_ENCODER(LDR, rs, immediate)
-#define ASM_LD(rs, rd, offset) I_ENCODER(LD, rs, rd, offset)
-#define ASM_SD(rs, rmemd, offset) I_ENCODER(SD, rs, rmemd, offset)
+#define ASM_LPCR(rs, immediate) J_ENCODER(LPCR, rs, immediate)
+#define ASM_L64(rs, rd, offset) I_ENCODER(L64, rs, rd, offset)
+#define ASM_S64(rs, rmemd, offset) I_ENCODER(S64, rs, rmemd, offset)
 
 #define ASM_ADDI(rs,rd,immediate) I_ENCODER(ADDI,rs,rd,immediate)
 #define ASM_ANDI(rs,rd,immediate) I_ENCODER(ANDI,rs,rd,immediate)
@@ -92,7 +92,7 @@
 
 
 #define ASM_MOV(rs,rd) I_ENCODER(ADDI,rs,rd,0) // pseudo-instruction
-#define ASM_LI(rd,immediate) CHUNK_ENCODER(LDC, rd, 0, 1 ,immediate) // pseudo-instruction
+#define ASM_LI(rd,immediate) CHUNK_ENCODER(AC, rd, 0, 1 ,immediate) // pseudo-instruction
 #define ASM_SLI(rd,immediate) I_ENCODER(ADDI,ZR,rd,immediate) // pseudo-instruction
 
 #define ASM_JAL(rd, immediate) J_ENCODER(JAL, rd, (immediate) >> 2)

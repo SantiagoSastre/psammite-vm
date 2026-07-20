@@ -57,17 +57,17 @@ static inline InternalExitCodes psammite_step(PsammiteVM *vm) {
     case EXECUTE:
       code = psammite_route_execute(vm, instruction);
       break;
-    case LDC:
-        code = psammite_ldc(vm, instruction);
+    case AC:
+        code = psammite_ac(vm, instruction);
         break;
-    case LDR:
-        code = psammite_ldr(vm, instruction);
+    case LPCR:
+        code = psammite_lpcr(vm, instruction);
         break;
-    case LD:
-        code = psammite_ld(vm, instruction);
+    case L64:
+        code = psammite_l64(vm, instruction);
         break;
-    case SD:
-        code = psammite_sd(vm, instruction);
+    case S64:
+        code = psammite_s64(vm, instruction);
         break;
     case ADDI:
         code = psammite_addi(vm, instruction);

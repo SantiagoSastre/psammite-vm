@@ -8,7 +8,7 @@
 
 
 
-static inline InternalExitCodes psammite_ldc(PsammiteVM *vm, uint32_t instruction) {
+static inline InternalExitCodes psammite_ac(PsammiteVM *vm, uint32_t instruction) {
   uint8_t rd = psammite_decode_chunk_rd(instruction);
   uint8_t chunk_selector = psammite_decode_chunk_selector(instruction);
   uint8_t zero_flag = psammite_decode_chunk_zero_flag(instruction);
@@ -28,7 +28,7 @@ static inline InternalExitCodes psammite_ldc(PsammiteVM *vm, uint32_t instructio
   return VM_OK;
 }
 
-static inline InternalExitCodes psammite_ldr(PsammiteVM *vm, uint32_t instruction) {
+static inline InternalExitCodes psammite_lpcr(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rd = psammite_decode_jtype_rd(instruction);
     uint32_t offset = psammite_decode_jtype_offset(instruction);
     int32_t signed_offset = ((int32_t)(offset<<11)) >> 11;
@@ -42,7 +42,7 @@ static inline InternalExitCodes psammite_ldr(PsammiteVM *vm, uint32_t instructio
 
 }
 
-static inline InternalExitCodes psammite_ld(PsammiteVM *vm, uint32_t instruction) {
+static inline InternalExitCodes psammite_l64(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs = psammite_decode_itype_rs(instruction);
     uint8_t rd = psammite_decode_itype_rd(instruction);
     uint16_t offset = psammite_decode_itype_immediate(instruction);
@@ -58,7 +58,7 @@ static inline InternalExitCodes psammite_ld(PsammiteVM *vm, uint32_t instruction
     return VM_OK;
 }
 
-static inline InternalExitCodes psammite_sd(PsammiteVM *vm, uint32_t instruction) {
+static inline InternalExitCodes psammite_s64(PsammiteVM *vm, uint32_t instruction) {
     uint8_t value_reg = psammite_decode_itype_rs(instruction);
     uint8_t address_reg = psammite_decode_itype_rd(instruction);
     uint16_t offset = psammite_decode_itype_immediate(instruction);
