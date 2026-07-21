@@ -22,6 +22,7 @@ typedef union {
 typedef struct {
   uint64_t pc;
   uint32_t ir;
+  size_t memory_size;
   uint64_t _registers[NUM_REGISTER];
   PsammiteFloat _f_registers[NUM_REGISTER];
   uint8_t _memory[VM_MEM_SIZE];

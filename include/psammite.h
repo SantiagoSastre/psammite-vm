@@ -46,8 +46,8 @@ int psammite_run(PsammiteVM *vm);
 
 
 
-static inline InternalExitCodes psammite_step(PsammiteVM *vm) {
-    InternalExitCodes code;
+static inline PsammiteStatusCodes psammite_step(PsammiteVM *vm) {
+    PsammiteStatusCodes code;
   if (psammite_fetch_to_ir(vm)!=0) {
     return VM_ERR_GENERIC;
   }

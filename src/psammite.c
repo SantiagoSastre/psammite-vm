@@ -129,7 +129,7 @@ void psammite_dump(PsammiteVM *vm) {
 
 
 int psammite_run(PsammiteVM *vm) {
-  InternalExitCodes code = VM_OK;
+  PsammiteStatusCodes code = VM_OK;
   while(code == VM_OK){
     code = psammite_step(vm);
   }

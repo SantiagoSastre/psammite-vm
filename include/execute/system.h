@@ -10,7 +10,7 @@
 
 
 //No other arguments for now to prevent compiler errors with strict flags, will add as more system opcodes use more elements
-static inline InternalExitCodes psammite_system_execute(uint8_t func7) {
+static inline PsammiteStatusCodes psammite_system_execute(uint8_t func7) {
   switch (func7) {
     case HALT:
       return VM_HALT;

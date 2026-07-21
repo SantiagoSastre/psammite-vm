@@ -18,7 +18,7 @@
 
 
 
-static inline InternalExitCodes psammite_route_execute(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_route_execute(PsammiteVM *vm, uint32_t instruction) {
   uint8_t func4 = psammite_decode_rtype_func4(instruction);
   uint8_t func7 = psammite_decode_rtype_func7(instruction);
   uint8_t rs1 = psammite_decode_rtype_rs1(instruction);

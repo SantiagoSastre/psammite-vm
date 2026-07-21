@@ -7,7 +7,7 @@
 #include "status_codes.h"
 
 
-static inline InternalExitCodes psammite_jal(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_jal(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rd = psammite_decode_jtype_rd(instruction);
     uint32_t offset = psammite_decode_jtype_offset(instruction);
     int64_t signed_offset = (int64_t)(((int32_t)(offset << 11)) >> 11) * 4;
@@ -17,7 +17,7 @@ static inline InternalExitCodes psammite_jal(PsammiteVM *vm, uint32_t instructio
     return VM_OK;
 }
 
-static inline InternalExitCodes psammite_jalr(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_jalr(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs = psammite_decode_itype_rs(instruction);
     uint8_t rd = psammite_decode_itype_rd(instruction);
     uint16_t offset = psammite_decode_itype_immediate(instruction);

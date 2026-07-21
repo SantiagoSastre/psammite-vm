@@ -7,7 +7,7 @@
 #include "status_codes.h"
 
 
-static inline InternalExitCodes psammite_beq(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_beq(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs1 = psammite_decode_btype_rs1(instruction);
     uint8_t rs2 = psammite_decode_btype_rs2(instruction);
     uint16_t offset = psammite_decode_btype_offset(instruction);
@@ -21,7 +21,7 @@ static inline InternalExitCodes psammite_beq(PsammiteVM *vm, uint32_t instructio
     return VM_OK;
 }
 
-static inline InternalExitCodes psammite_bne(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_bne(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs1 = psammite_decode_btype_rs1(instruction);
     uint8_t rs2 = psammite_decode_btype_rs2(instruction);
     uint16_t offset = psammite_decode_btype_offset(instruction);
@@ -35,7 +35,7 @@ static inline InternalExitCodes psammite_bne(PsammiteVM *vm, uint32_t instructio
     return VM_OK;
 }
 
-static inline InternalExitCodes psammite_blt(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_blt(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs1 = psammite_decode_btype_rs1(instruction);
     uint8_t rs2 = psammite_decode_btype_rs2(instruction);
     uint16_t offset = psammite_decode_btype_offset(instruction);
@@ -49,7 +49,7 @@ static inline InternalExitCodes psammite_blt(PsammiteVM *vm, uint32_t instructio
     return VM_OK;
 }
 
-static inline InternalExitCodes psammite_bge(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_bge(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs1 = psammite_decode_btype_rs1(instruction);
     uint8_t rs2 = psammite_decode_btype_rs2(instruction);
     uint16_t offset = psammite_decode_btype_offset(instruction);
@@ -63,7 +63,7 @@ static inline InternalExitCodes psammite_bge(PsammiteVM *vm, uint32_t instructio
     return VM_OK;
 }
 
-static inline InternalExitCodes psammite_sblt(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_sblt(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs1 = psammite_decode_btype_rs1(instruction);
     uint8_t rs2 = psammite_decode_btype_rs2(instruction);
     uint16_t offset = psammite_decode_btype_offset(instruction);
@@ -77,7 +77,7 @@ static inline InternalExitCodes psammite_sblt(PsammiteVM *vm, uint32_t instructi
     return VM_OK;
 }
 
-static inline InternalExitCodes psammite_sbge(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_sbge(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs1 = psammite_decode_btype_rs1(instruction);
     uint8_t rs2 = psammite_decode_btype_rs2(instruction);
     uint16_t offset = psammite_decode_btype_offset(instruction);
