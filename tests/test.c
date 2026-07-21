@@ -36,6 +36,22 @@ void test_vm_endianness() {
   psammite_free_memory(&vm);
 }
 
+
+void test_vm_get_mem_size() {
+  PsammiteVM vm = {0};
+  psammite_init(&vm, 0x100000);
+  uint8_t program[] = {
+      ASM_GET_MEMORY_SIZE(R4),
+      ASM_HALT
+  };
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_ASSERT(status == 0);
+  VM_ASSERT(psammite_read_register(&vm,R4) == 0x100000);
+
+  psammite_free_memory(&vm);
+}
+
 void test_vm_addi() {
   PsammiteVM vm = {0};
   psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
@@ -649,6 +665,7 @@ void test_vm_srai() {
 int main() {
   test_vm_memory_initialization();
   test_vm_endianness();
+  test_vm_get_mem_size();
   test_vm_addi();
   test_vm_zr_hardwiring();
   test_vm_oob();

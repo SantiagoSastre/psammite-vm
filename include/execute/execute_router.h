@@ -26,7 +26,7 @@ static inline PsammiteStatusCodes psammite_route_execute(PsammiteVM *vm, uint32_
   uint8_t rd = psammite_decode_rtype_rd(instruction);
   switch (func4) {
     case SYSTEM:
-      return psammite_system_execute(func7);
+      return psammite_system_execute(vm, func7, rd);
     case IMATH:
       return psammite_imath_execute(vm, func7, rs1, rs2, rd);
     default:
