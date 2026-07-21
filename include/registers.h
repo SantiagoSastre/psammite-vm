@@ -36,7 +36,7 @@ typedef enum {
   R29 = 29,
   R30 = 30,
   R31 = 31
-} Register;
+} PsammiteRegister;
 
 
 
@@ -73,7 +73,7 @@ typedef enum {
   FR29 = 29,
   FR30 = 30,
   FR31 = 31
-} FRegister;
+} PsammiteFRegister;
 
 
 #endif

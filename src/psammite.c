@@ -50,7 +50,7 @@ int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size)
 
 void psammite_print_registers(PsammiteVM *vm) {
     printf("-----------------------Integer Registers----------------------------------------------------------------------------------------\n");
-    for(Register i = ZR; i<NUM_REGISTER; i++) {
+    for(PsammiteRegister i = ZR; i<NUM_REGISTER; i++) {
       if (i%4==0 && i!=ZR) {
         printf("\n");
       }
@@ -79,7 +79,7 @@ void psammite_print_registers(PsammiteVM *vm) {
 void psammite_print_f_registers(PsammiteVM *vm) {
     printf("-----------------------Float Registers------------------------------------------------------------------------------------------\n");
 
-    for(FRegister i = FR0; i<NUM_REGISTER; i++) {
+    for(PsammiteFRegister i = FR0; i<NUM_REGISTER; i++) {
       if (i%4==0 && i!=FR0) {
         printf("\n");
       }
