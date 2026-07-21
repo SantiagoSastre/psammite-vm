@@ -26,9 +26,8 @@
 
 
 int psammite_reset(PsammiteVM *vm);
-int psammite_init(PsammiteVM *vm);
-PsammiteVM* psammite_new();
-void psammite_free(PsammiteVM *vm);
+int psammite_init(PsammiteVM *vm, size_t memory_size);
+void psammite_free_memory(PsammiteVM *vm);
 int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size);
 void psammite_dump(PsammiteVM *vm);
 void psammite_print_registers(PsammiteVM *vm);

@@ -77,9 +77,8 @@ Only Clang, GCC, and MSVC are supported when compiling the project due to the us
 ## Specification
 * Architecture: 64-bit word size, little endian.
 * Instruction width: fixed 32-bit instructions.
-* Memory: 64 KB, byte-addressable.
-* Stack: full-descending (grows downwards, points to the last element).
-* ABI rule: Each function (Callee) must  restore the Link Register and Base Pointer of their caller.
+* Memory: minimum 64 KB, variable size, byte-addressable.
+* ABI rule: Each function (Callee) must  restore the Link Register and Base Pointer of their caller. The stack is full-descending (grows downwards, points to the last element, enforced by the program itself).
 * Program counter: single 64-bit register (PC). PC-relative offsets are calculated from the next instruction (PC + 4).
 * Integer registers (32x64-bit):
   * R0/ZR is hardwired to 0.

@@ -8,38 +8,34 @@ int psammite_reset(PsammiteVM *vm) {
   vm->ir = 0;
   memset(vm->_registers, 0, sizeof(vm->_registers));
   memset(vm->_f_registers,0,sizeof(vm->_f_registers));
-  memset(vm->_memory, 0, sizeof(vm->_memory));
-
-  //Set the Stack Pointer to the end of memory
-  psammite_write_register(vm, SP, VM_MEM_SIZE);
-
+  memset(vm->_memory, 0, vm->_memory_size);
 
   return 0;
 }
 
-int psammite_init(PsammiteVM *vm) {
-  if (psammite_reset(vm)!= 0 ) {
+// Expects a zero initialized vm struct reference
+int psammite_init(PsammiteVM *vm, size_t memory_size) {
+  if (memory_size < PSAMMITE_MIN_MEM_SIZE) {
+    return 1;
+  }
+  vm->_memory_size = memory_size;
+  vm->_memory = calloc(vm->_memory_size, 1);
+  if (vm->_memory == NULL) {
     return 1;
   }
   return 0;
 
 }
 
-PsammiteVM* psammite_new() {
-  PsammiteVM* vm = malloc(sizeof(PsammiteVM));
-  if (vm == NULL) {
-    return NULL;
-  }
-  psammite_init(vm);
-  return vm;
-}
 
-void psammite_free(PsammiteVM *vm) {
-  free(vm);
+
+void psammite_free_memory(PsammiteVM *vm) {
+  free(vm->_memory);
+  vm->_memory = NULL;
 }
 
 int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size){
-  if (program_size > VM_MEM_SIZE) {
+  if (program_size > vm->_memory_size) {
     fprintf(stderr, "FATAL ERROR: Program too large for VM memory.\n");
     return 1;
   }
@@ -99,8 +95,8 @@ void psammite_print_memory_window(PsammiteVM *vm) {
       start_address = aligned_pc-16;
     }
     end_address = start_address+48;
-    if (end_address > VM_MEM_SIZE) {
-      end_address = VM_MEM_SIZE;
+    if (end_address > vm->_memory_size) {
+      end_address = vm->_memory_size;
       start_address = end_address - 48;
       if (end_address < 48) {
         start_address = 0;

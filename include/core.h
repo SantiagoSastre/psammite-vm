@@ -12,7 +12,7 @@
 
 
 
-#define VM_MEM_SIZE 65536
+#define PSAMMITE_MIN_MEM_SIZE 65536
 
 typedef union {
   uint64_t bits;
@@ -22,10 +22,11 @@ typedef union {
 typedef struct {
   uint64_t pc;
   uint32_t ir;
-  size_t memory_size;
+  size_t _memory_size;
   uint64_t _registers[NUM_REGISTER];
   PsammiteFloat _f_registers[NUM_REGISTER];
-  uint8_t _memory[VM_MEM_SIZE];
+  uint8_t* _memory;
+  
 } PsammiteVM;
 
 
@@ -53,7 +54,7 @@ static inline PsammiteFloat psammite_read_f_register(PsammiteVM *vm, uint8_t reg
 
 
 static inline int psammite_read_memory(PsammiteVM *vm, uint64_t address, uint64_t *out_value) {
-    if (address+8>VM_MEM_SIZE) {
+    if (address+8>vm->_memory_size) {
         return 1;
     }
     memcpy(out_value,&vm->_memory[address],sizeof(uint64_t));
@@ -62,7 +63,7 @@ static inline int psammite_read_memory(PsammiteVM *vm, uint64_t address, uint64_
 }
 
 static inline int psammite_write_memory(PsammiteVM *vm, uint64_t address, uint64_t value) {
-    if (address+8>VM_MEM_SIZE) {
+    if (address+8>vm->_memory_size) {
         return 1;
     }
     uint64_t tmp = HOST_TO_VM64(value);
@@ -71,7 +72,7 @@ static inline int psammite_write_memory(PsammiteVM *vm, uint64_t address, uint64
 }
 
 static inline int psammite_fetch_to_ir(PsammiteVM *vm) {
-  if (vm->pc+4>VM_MEM_SIZE) {
+  if (vm->pc+4>vm->_memory_size) {
     return 1;
   }
   memcpy(&vm->ir,&vm->_memory[vm->pc],sizeof(uint32_t));

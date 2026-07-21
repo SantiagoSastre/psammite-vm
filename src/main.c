@@ -1,13 +1,9 @@
 #include "psammite.h"
 
 int main() {
-  PsammiteVM* vm = psammite_new();
-  if (vm == NULL) {
-    fprintf(stderr, "VM could not be instantiated.");
-    return 1;
-  }
-  psammite_dump(vm);
-  psammite_free(vm);
-  vm = NULL;
+  PsammiteVM vm = {0};
+  psammite_init(&vm, 0x100000);
+  psammite_dump(&vm);
+  psammite_free_memory(&vm);
   return 0;
 }
