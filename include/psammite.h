@@ -26,9 +26,8 @@
 
 
 int psammite_reset(PsammiteVM *vm);
-int psammite_init(PsammiteVM *vm);
-PsammiteVM* psammite_new();
-void psammite_free(PsammiteVM *vm);
+int psammite_init(PsammiteVM *vm, size_t memory_size);
+void psammite_free_memory(PsammiteVM *vm);
 int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size);
 void psammite_dump(PsammiteVM *vm);
 void psammite_print_registers(PsammiteVM *vm);
@@ -46,8 +45,8 @@ int psammite_run(PsammiteVM *vm);
 
 
 
-static inline InternalExitCodes psammite_step(PsammiteVM *vm) {
-    InternalExitCodes code;
+static inline PsammiteStatusCodes psammite_step(PsammiteVM *vm) {
+    PsammiteStatusCodes code;
   if (psammite_fetch_to_ir(vm)!=0) {
     return VM_ERR_GENERIC;
   }
@@ -68,6 +67,33 @@ static inline InternalExitCodes psammite_step(PsammiteVM *vm) {
         break;
     case S64:
         code = psammite_s64(vm, instruction);
+        break;
+    case L32:
+        code = psammite_l32(vm, instruction);
+        break;
+    case L32S:
+        code = psammite_l32s(vm, instruction);
+        break;
+    case S32:
+        code = psammite_s32(vm, instruction);
+        break;
+    case L16:
+        code = psammite_l16(vm, instruction);
+        break;
+    case L16S:
+        code = psammite_l16s(vm, instruction);
+        break;
+    case S16:
+        code = psammite_s16(vm, instruction);
+        break;
+    case L8:
+        code = psammite_l8(vm, instruction);
+        break;
+    case L8S:
+        code = psammite_l8s(vm, instruction);
+        break;
+    case S8:
+        code = psammite_s8(vm, instruction);
         break;
     case ADDI:
         code = psammite_addi(vm, instruction);

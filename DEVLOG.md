@@ -135,3 +135,24 @@ Second, the chunk instruction encoding was improved. The `LDC` instruction now h
 * `LDCZ`: Zeroes register first, then inserts chunk (`zero_flag` = 1)
 
 `LOADI` has been replaced by `LI` and `SLI`, which expand to `LDCZ` and `ADDI`.
+
+## [22/7/26] Logical operations, variable width memory access, variable size memory, and major refactor
+
+Hey! It has been a minute, and while I had been a little busy working on another projects, I did add a couple of features throughout the month, and I worked in Psammite a lot the last two days. So... what's new?
+
+* RAM can be dynamically allocated to the heap, allowing for much larger memory.
+* Memory load/store instructions for 8-bit, 16-bit, and 32-bit values have been added, and the existing instructions have been renamed so they are more consistent: `L64`, `L32`, `L32S`, `L16`, `L16S`, `L8`, `L8S`, `S64`,`S32`,`S16`, and `S8`.
+* `LDR` and `LDC` have been renamed to `LPCR` (Load PC Relative) and `AC` (Assemble Chunk) to better reflect what they do.
+* `GET_MEMORY_SIZE` `R-type` instruction in the `SYSTEM` `func4`.
+* Shifting and Logical bitwise instructions, and their immediate versions.
+* The source code has been reorganized, and renamed for easier mantainance.
+* Tests for all new instructions.
+* Many bug fixes, and polish.
+
+I spent a lot of time refactoring the project and I believe it is much more robust, consistent, and easy to understand. I want to keep Psammite clean, with good coding practices so it is easy to mantain and update. As I said in the first DEVLOG entry, I'm not an expert at all, and I am impressed by the current state of the VM. The VM stage of the project is almost done, only floats and I/O are missing. And while I have taken more time than what I first thought, I have learned a lot. 
+
+I have deepened my understanding of bitwise operations, VM design tradeoffs between code density and speed, some coding practices I did not know. And tbh, while I pick up programming languages pretty quickly, I wasn't really proficient in C at the beginning, I only knew the basic syntax; My comfort languages were Python, Javascript, C#, and now I feel much more at ease working in C. I have done several mistakes designing Psammite, for example, not being consistent with instruction names; and it is in no way perfect or designed to replace serious projects. And something that surprised me is that I also learnt how malicious actors use overflows to exploit VMs and measures to prevent it, which I promptly implemented for Psammite. I am deeply grateful for having the time to develop Psammite and learn in a way it's so enjoyable, and I will not stop here, I will continue learning and growing.
+
+After the last update, I started researching more other architectures and VMs, I read the RISC-V specification, to better understand the tradeoffs and decisions made in production grade projects. I did this so I can make more informed decisions, engineer and deliver a good quality project I can be proud of.
+
+The next steps are floats, those 32 registers are finally getting used, and I/O and then I will start work in the assembler. Expect those final features soon!!

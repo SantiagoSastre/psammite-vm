@@ -41,6 +41,7 @@ typedef enum {
 
 typedef enum {
   HALT = 0x00,
+  GET_MEMORY_SIZE = 0x01,
 } SystemCodes;
 
 typedef enum {

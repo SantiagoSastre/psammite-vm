@@ -48,6 +48,8 @@
 
 
 #define ASM_HALT R_ENCODER(EXECUTE,0,0,0,SYSTEM,HALT)
+#define ASM_GET_MEMORY_SIZE(rd) R_ENCODER(EXECUTE,0,0,rd,SYSTEM,GET_MEMORY_SIZE)
+
 #define ASM_NOP I_ENCODER(ADDI,ZR,ZR,0) // pseudo-instruction
 
 #define ASM_ADD(rs1,rs2,rd) R_ENCODER(EXECUTE,rs1,rs2,rd,IMATH,ADD)
@@ -76,7 +78,17 @@
 
 #define ASM_LPCR(rs, immediate) J_ENCODER(LPCR, rs, immediate)
 #define ASM_L64(rs, rd, offset) I_ENCODER(L64, rs, rd, offset)
+#define ASM_L32(rs, rd, offset) I_ENCODER(L32, rs, rd, offset)
+#define ASM_L32S(rs, rd, offset) I_ENCODER(L32S, rs, rd, offset)
+#define ASM_L16(rs, rd, offset) I_ENCODER(L16, rs, rd, offset)
+#define ASM_L16S(rs, rd, offset) I_ENCODER(L16S, rs, rd, offset)
+#define ASM_L8(rs, rd, offset) I_ENCODER(L8, rs, rd, offset)
+#define ASM_L8S(rs, rd, offset) I_ENCODER(L8S, rs, rd, offset)
+
 #define ASM_S64(rs, rmemd, offset) I_ENCODER(S64, rs, rmemd, offset)
+#define ASM_S32(rs, rmemd, offset) I_ENCODER(S32, rs, rmemd, offset)
+#define ASM_S16(rs, rmemd, offset) I_ENCODER(S16, rs, rmemd, offset)
+#define ASM_S8(rs, rmemd, offset) I_ENCODER(S8, rs, rmemd, offset)
 
 #define ASM_ADDI(rs,rd,immediate) I_ENCODER(ADDI,rs,rd,immediate)
 #define ASM_ANDI(rs,rd,immediate) I_ENCODER(ANDI,rs,rd,immediate)

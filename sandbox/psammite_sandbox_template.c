@@ -10,16 +10,12 @@ uint8_t program[] = {
 };
 
 int main() {
-  PsammiteVM* vm = psammite_new();
-  if (vm == NULL) {
-    fprintf(stderr, "VM could not be instantiated.\n");
-    return 1;
-  }
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
 
-  psammite_load_program(vm, program, sizeof(program));
-  psammite_run(vm);
-  psammite_dump(vm);
-  psammite_free(vm);
-  vm = NULL;
+  psammite_load_program(&vm, program, sizeof(program));
+  psammite_run(&vm);
+  psammite_dump(&vm);
+  psammite_free_memory(&vm);
   return 0;
 }

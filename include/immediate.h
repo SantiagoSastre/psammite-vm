@@ -6,7 +6,7 @@
 #include "decoders.h"
 #include "status_codes.h"
 
-static inline InternalExitCodes psammite_addi(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_addi(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs, rd;
     uint16_t immediate;
     psammite_decode_itype(instruction, &rs, &rd, &immediate);
@@ -18,7 +18,7 @@ static inline InternalExitCodes psammite_addi(PsammiteVM *vm, uint32_t instructi
 
 }
 
-static inline InternalExitCodes psammite_andi(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_andi(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs, rd;
     uint16_t immediate;
     psammite_decode_itype(instruction, &rs, &rd, &immediate);
@@ -30,7 +30,7 @@ static inline InternalExitCodes psammite_andi(PsammiteVM *vm, uint32_t instructi
 
 }
 
-static inline InternalExitCodes psammite_ori(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_ori(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs, rd;
     uint16_t immediate;
     psammite_decode_itype(instruction, &rs, &rd, &immediate);
@@ -42,7 +42,7 @@ static inline InternalExitCodes psammite_ori(PsammiteVM *vm, uint32_t instructio
 
 }
 
-static inline InternalExitCodes psammite_xori(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_xori(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs, rd;
     uint16_t immediate;
     psammite_decode_itype(instruction, &rs, &rd, &immediate);
@@ -55,7 +55,7 @@ static inline InternalExitCodes psammite_xori(PsammiteVM *vm, uint32_t instructi
 }
 
 
-static inline InternalExitCodes psammite_slli(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_slli(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs, rd;
     uint16_t immediate;
     psammite_decode_itype(instruction, &rs, &rd, &immediate);
@@ -66,7 +66,7 @@ static inline InternalExitCodes psammite_slli(PsammiteVM *vm, uint32_t instructi
 
 }
 
-static inline InternalExitCodes psammite_srli(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_srli(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs, rd;
     uint16_t immediate;
     psammite_decode_itype(instruction, &rs, &rd, &immediate);
@@ -77,7 +77,7 @@ static inline InternalExitCodes psammite_srli(PsammiteVM *vm, uint32_t instructi
 
 }
 
-static inline InternalExitCodes psammite_srai(PsammiteVM *vm, uint32_t instruction) {
+static inline PsammiteStatusCodes psammite_srai(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs, rd;
     uint16_t immediate;
     psammite_decode_itype(instruction, &rs, &rd, &immediate);

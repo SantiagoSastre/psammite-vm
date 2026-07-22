@@ -7,7 +7,7 @@
 #include "opcodes.h"
 #include "status_codes.h"
 
-static inline InternalExitCodes psammite_imath_execute(PsammiteVM *vm, uint8_t func7, uint8_t rs1, uint8_t rs2, uint8_t rd) {
+static inline PsammiteStatusCodes psammite_imath_execute(PsammiteVM *vm, uint8_t func7, uint8_t rs1, uint8_t rs2, uint8_t rd) {
   uint64_t val1 = psammite_read_register(vm, rs1);
   uint64_t val2 = psammite_read_register(vm, rs2);
   switch (func7) {
