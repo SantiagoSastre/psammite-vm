@@ -203,7 +203,7 @@ void test_vm_s64() {
   psammite_load_program(&vm, program, sizeof(program));
   int vm_status = psammite_run(&vm);
   uint64_t ram_value;
-  int read_status = psammite_read_memory(&vm, 16, &ram_value);
+  int read_status = psammite_read_memory64(&vm, 16, &ram_value);
   VM_ASSERT(vm_status == 0);
   VM_ASSERT(read_status == 0);
   VM_ASSERT(ram_value == 196);

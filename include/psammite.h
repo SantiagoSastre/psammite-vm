@@ -68,6 +68,33 @@ static inline PsammiteStatusCodes psammite_step(PsammiteVM *vm) {
     case S64:
         code = psammite_s64(vm, instruction);
         break;
+    case L32:
+        code = psammite_l32(vm, instruction);
+        break;
+    case L32S:
+        code = psammite_l32s(vm, instruction);
+        break;
+    case S32:
+        code = psammite_s32(vm, instruction);
+        break;
+    case L16:
+        code = psammite_l16(vm, instruction);
+        break;
+    case L16S:
+        code = psammite_l16s(vm, instruction);
+        break;
+    case S16:
+        code = psammite_s16(vm, instruction);
+        break;
+    case L8:
+        code = psammite_l8(vm, instruction);
+        break;
+    case L8S:
+        code = psammite_l8s(vm, instruction);
+        break;
+    case S8:
+        code = psammite_s8(vm, instruction);
+        break;
     case ADDI:
         code = psammite_addi(vm, instruction);
         break;
