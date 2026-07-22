@@ -54,69 +54,61 @@ static inline PsammiteFloat psammite_read_f_register(PsammiteVM *vm, uint8_t reg
 
 
 static inline int psammite_read_memory64(PsammiteVM *vm, uint64_t address, uint64_t *out_value) {
-    if (address > vm->_memory_size) return 1;
-    if (address + 8 > vm->_memory_size) return 1;
+    if (address + 8 > vm->_memory_size || address + 8 < address) return 1;
     memcpy(out_value,&vm->_memory[address],sizeof(uint64_t));
     *out_value = VM_TO_HOST64(*out_value);
     return 0;
 }
 
 static inline int psammite_read_memory32(PsammiteVM *vm, uint64_t address, uint32_t *out_value) {
-    if (address > vm->_memory_size) return 1;
-    if (address + 4 > vm->_memory_size) return 1;
+    if (address + 4 > vm->_memory_size || address + 4 < address) return 1;
     memcpy(out_value,&vm->_memory[address],sizeof(uint32_t));
     *out_value = VM_TO_HOST32(*out_value);
     return 0;
 }
 
 static inline int psammite_read_memory16(PsammiteVM *vm, uint64_t address, uint16_t *out_value) {
-    if (address > vm->_memory_size) return 1;
-    if (address + 2 > vm->_memory_size) return 1;
+    if (address + 2 > vm->_memory_size || address + 2 < address) return 1;
     memcpy(out_value,&vm->_memory[address],sizeof(uint16_t));
     *out_value = VM_TO_HOST16(*out_value);
     return 0;
 }
 
 static inline int psammite_read_memory8(PsammiteVM *vm, uint64_t address, uint8_t *out_value) {
-    if (address > vm->_memory_size) return 1;
-    if (address + 1 > vm->_memory_size) return 1;
+    if (address + 1 > vm->_memory_size || address + 1 < address) return 1;
     memcpy(out_value,&vm->_memory[address],sizeof(uint8_t));
     return 0;
 }
 
 static inline int psammite_write_memory64(PsammiteVM *vm, uint64_t address, uint64_t value) {
-    if (address > vm->_memory_size) return 1;
-    if (address + 8 > vm->_memory_size) return 1;
+    if (address + 8 > vm->_memory_size || address + 8 < address) return 1;
     uint64_t tmp = HOST_TO_VM64(value);
     memcpy(&vm->_memory[address], &tmp, sizeof(uint64_t));
     return 0;
 }
 
 static inline int psammite_write_memory32(PsammiteVM *vm, uint64_t address, uint32_t value) {
-    if (address > vm->_memory_size) return 1;
-    if (address + 4 > vm->_memory_size) return 1;
+    if (address + 4 > vm->_memory_size || address + 4 < address) return 1;
     uint32_t tmp = HOST_TO_VM32(value);
     memcpy(&vm->_memory[address], &tmp, sizeof(uint32_t));
     return 0;
 }
 
 static inline int psammite_write_memory16(PsammiteVM *vm, uint64_t address, uint16_t value) {
-    if (address > vm->_memory_size) return 1;
-    if (address + 2 > vm->_memory_size) return 1;
+    if (address + 2 > vm->_memory_size || address + 2 < address) return 1;
     uint16_t tmp = HOST_TO_VM16(value);
     memcpy(&vm->_memory[address], &tmp, sizeof(uint16_t));
     return 0;
 }
 
 static inline int psammite_write_memory8(PsammiteVM *vm, uint64_t address, uint8_t value) {
-    if (address > vm->_memory_size) return 1;
-    if (address + 1 > vm->_memory_size) return 1;
+    if (address + 1 > vm->_memory_size || address + 1 < address) return 1;
     memcpy(&vm->_memory[address], &value, sizeof(uint8_t));
     return 0;
 }
 
 static inline int psammite_fetch_to_ir(PsammiteVM *vm) {
-  if (vm->pc+4>vm->_memory_size) {
+  if (vm->pc+4>vm->_memory_size || vm->pc+4<vm->pc) {
     return 1;
   }
   memcpy(&vm->ir,&vm->_memory[vm->pc],sizeof(uint32_t));
