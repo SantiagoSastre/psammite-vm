@@ -4,7 +4,6 @@
 
 #include "core.h"
 #include "decoders.h"
-#include "status_codes.h"
 
 static inline PsammiteStatusCodes psammite_addi(PsammiteVM *vm, uint32_t instruction) {
     uint8_t rs, rd;

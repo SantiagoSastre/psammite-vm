@@ -8,7 +8,6 @@
 #endif
 
 #include "core.h"
-#include "status_codes.h"
 #include "opcodes.h"
 #include "execute/execute_router.h"
 #include "load_store.h"
@@ -30,9 +29,8 @@ int psammite_init(PsammiteVM *vm, size_t memory_size);
 void psammite_free_memory(PsammiteVM *vm);
 int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size);
 void psammite_dump(PsammiteVM *vm);
-void psammite_print_registers(PsammiteVM *vm);
-void psammite_print_f_registers(PsammiteVM *vm);
-void psammite_print_memory_window(PsammiteVM *vm);
+PsammiteStatusCodes psammite_get_panic_motive(const PsammiteVM *vm);
+PsammiteVMState psammite_get_status(const PsammiteVM *vm);
 int psammite_run(PsammiteVM *vm);
 
 
@@ -45,12 +43,13 @@ int psammite_run(PsammiteVM *vm);
 
 
 
-static inline PsammiteStatusCodes psammite_step(PsammiteVM *vm) {
-    PsammiteStatusCodes code;
-  if (psammite_fetch_to_ir(vm)!=0) {
-    return VM_ERR_GENERIC;
+static inline PsammiteVMState psammite_step(PsammiteVM *vm) {
+    PsammiteStatusCodes code = VM_OK;
+  if (psammite_fetch_to_ir(vm)!=VM_OK) {
+    vm->_status = VM_STATE_PANIC;
+    return vm->_status;
   }
-  uint32_t instruction = vm->ir;
+  uint32_t instruction = vm->_ir;
   uint8_t opcode = psammite_decode_opcode(instruction);
   switch (opcode) {
     case EXECUTE:
@@ -140,12 +139,21 @@ static inline PsammiteStatusCodes psammite_step(PsammiteVM *vm) {
     case SBGE:
         code = psammite_sbge(vm, instruction);
         break;
+    case LF64:
+        code = psammite_lf64(vm, instruction);
+        break;
+    case SF64:
+        code = psammite_sf64(vm, instruction);
+        break;
     default:
-      fprintf(stderr, "Unrecognized Opcode, halting.\n");
-      code = VM_ERR_GENERIC;
+      code = VM_ERROR_UNRECOGNIZED;
       break;
   }
-  return code;
+  if (code != VM_OK) {
+    vm->_status = VM_STATE_PANIC;
+  }
+  return vm->_status;
+  
 }
 
 

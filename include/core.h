@@ -9,6 +9,7 @@
 
 #include "registers.h"
 #include "endian.h"
+#include "status_codes.h"
 
 
 
@@ -16,16 +17,18 @@
 
 typedef union {
   uint64_t bits;
-  double as_float;
+  double f64;
 } PsammiteFloat;
 
 typedef struct {
-  uint64_t pc;
-  uint32_t ir;
+  uint64_t _pc;
+  uint32_t _ir;
   size_t _memory_size;
   uint64_t _registers[NUM_REGISTER];
   PsammiteFloat _f_registers[NUM_REGISTER];
   uint8_t* _memory;
+  PsammiteVMState _status;
+  PsammiteStatusCodes _panic_motive; //Holds VM_OK while no error has happened
   
 } PsammiteVM;
 
@@ -53,68 +56,68 @@ static inline PsammiteFloat psammite_read_f_register(PsammiteVM *vm, uint8_t reg
 }
 
 
-static inline int psammite_read_memory64(PsammiteVM *vm, uint64_t address, uint64_t *out_value) {
-    if (address + 8 > vm->_memory_size || address + 8 < address) return 1;
+static inline PsammiteStatusCodes psammite_read_memory64(PsammiteVM *vm, uint64_t address, uint64_t *out_value) {
+    if (address + 8 > vm->_memory_size || address + 8 < address) return VM_ERROR_MEM_BOUNDS;
     memcpy(out_value,&vm->_memory[address],sizeof(uint64_t));
     *out_value = VM_TO_HOST64(*out_value);
-    return 0;
+    return VM_OK;
 }
 
-static inline int psammite_read_memory32(PsammiteVM *vm, uint64_t address, uint32_t *out_value) {
-    if (address + 4 > vm->_memory_size || address + 4 < address) return 1;
+static inline PsammiteStatusCodes psammite_read_memory32(PsammiteVM *vm, uint64_t address, uint32_t *out_value) {
+    if (address + 4 > vm->_memory_size || address + 4 < address) return VM_ERROR_MEM_BOUNDS;
     memcpy(out_value,&vm->_memory[address],sizeof(uint32_t));
     *out_value = VM_TO_HOST32(*out_value);
-    return 0;
+    return VM_OK;
 }
 
-static inline int psammite_read_memory16(PsammiteVM *vm, uint64_t address, uint16_t *out_value) {
-    if (address + 2 > vm->_memory_size || address + 2 < address) return 1;
+static inline PsammiteStatusCodes psammite_read_memory16(PsammiteVM *vm, uint64_t address, uint16_t *out_value) {
+    if (address + 2 > vm->_memory_size || address + 2 < address) return VM_ERROR_MEM_BOUNDS;
     memcpy(out_value,&vm->_memory[address],sizeof(uint16_t));
     *out_value = VM_TO_HOST16(*out_value);
-    return 0;
+    return VM_OK;
 }
 
-static inline int psammite_read_memory8(PsammiteVM *vm, uint64_t address, uint8_t *out_value) {
-    if (address + 1 > vm->_memory_size || address + 1 < address) return 1;
+static inline PsammiteStatusCodes psammite_read_memory8(PsammiteVM *vm, uint64_t address, uint8_t *out_value) {
+    if (address + 1 > vm->_memory_size || address + 1 < address) return VM_ERROR_MEM_BOUNDS;
     memcpy(out_value,&vm->_memory[address],sizeof(uint8_t));
-    return 0;
+    return VM_OK;
 }
 
-static inline int psammite_write_memory64(PsammiteVM *vm, uint64_t address, uint64_t value) {
-    if (address + 8 > vm->_memory_size || address + 8 < address) return 1;
+static inline PsammiteStatusCodes psammite_write_memory64(PsammiteVM *vm, uint64_t address, uint64_t value) {
+    if (address + 8 > vm->_memory_size || address + 8 < address) return VM_ERROR_MEM_BOUNDS;
     uint64_t tmp = HOST_TO_VM64(value);
     memcpy(&vm->_memory[address], &tmp, sizeof(uint64_t));
-    return 0;
+    return VM_OK;
 }
 
-static inline int psammite_write_memory32(PsammiteVM *vm, uint64_t address, uint32_t value) {
-    if (address + 4 > vm->_memory_size || address + 4 < address) return 1;
+static inline PsammiteStatusCodes psammite_write_memory32(PsammiteVM *vm, uint64_t address, uint32_t value) {
+    if (address + 4 > vm->_memory_size || address + 4 < address) return VM_ERROR_MEM_BOUNDS;
     uint32_t tmp = HOST_TO_VM32(value);
     memcpy(&vm->_memory[address], &tmp, sizeof(uint32_t));
-    return 0;
+    return VM_OK;
 }
 
-static inline int psammite_write_memory16(PsammiteVM *vm, uint64_t address, uint16_t value) {
-    if (address + 2 > vm->_memory_size || address + 2 < address) return 1;
+static inline PsammiteStatusCodes psammite_write_memory16(PsammiteVM *vm, uint64_t address, uint16_t value) {
+    if (address + 2 > vm->_memory_size || address + 2 < address) return VM_ERROR_MEM_BOUNDS;
     uint16_t tmp = HOST_TO_VM16(value);
     memcpy(&vm->_memory[address], &tmp, sizeof(uint16_t));
-    return 0;
+    return VM_OK;
 }
 
-static inline int psammite_write_memory8(PsammiteVM *vm, uint64_t address, uint8_t value) {
-    if (address + 1 > vm->_memory_size || address + 1 < address) return 1;
+static inline PsammiteStatusCodes psammite_write_memory8(PsammiteVM *vm, uint64_t address, uint8_t value) {
+    if (address + 1 > vm->_memory_size || address + 1 < address) return VM_ERROR_MEM_BOUNDS;
     memcpy(&vm->_memory[address], &value, sizeof(uint8_t));
-    return 0;
+    return VM_OK;
 }
 
-static inline int psammite_fetch_to_ir(PsammiteVM *vm) {
-  if (vm->pc+4>vm->_memory_size || vm->pc+4<vm->pc) {
-    return 1;
+static inline PsammiteStatusCodes psammite_fetch_to_ir(PsammiteVM *vm) {
+  if (vm->_pc+4>vm->_memory_size || vm->_pc+4<vm->_pc) {
+    return VM_ERROR_MEM_BOUNDS;
   }
-  memcpy(&vm->ir,&vm->_memory[vm->pc],sizeof(uint32_t));
-  vm->ir = VM_TO_HOST32(vm->ir);
-  vm->pc = vm->pc + 4;
-  return 0;
+  memcpy(&vm->_ir,&vm->_memory[vm->_pc],sizeof(uint32_t));
+  vm->_ir = VM_TO_HOST32(vm->_ir);
+  vm->_pc = vm->_pc + 4;
+  return VM_OK;
 }
 
 

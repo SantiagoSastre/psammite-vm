@@ -1,11 +1,9 @@
 #ifndef PSAMMITE_IMATH
 #define PSAMMITE_IMATH
 
-#include <stdio.h>
 
 #include "core.h"
 #include "opcodes.h"
-#include "status_codes.h"
 
 static inline PsammiteStatusCodes psammite_imath_execute(PsammiteVM *vm, uint8_t func7, uint8_t rs1, uint8_t rs2, uint8_t rd) {
   uint64_t val1 = psammite_read_register(vm, rs1);
@@ -89,8 +87,7 @@ static inline PsammiteStatusCodes psammite_imath_execute(PsammiteVM *vm, uint8_t
       psammite_write_register(vm, rd,  (uint64_t)(( (int64_t)val1) >> (val2 & 0x3F)));
       return VM_OK;
     default:
-      fprintf(stderr, "Unrecognized Function 7 parameter in Execute IMath instruction, halting.\n");
-      return VM_ERR_GENERIC;
+      return VM_ERROR_UNRECOGNIZED;
 
   }
 }

@@ -1,5 +1,5 @@
 #include <stdlib.h>
-
+#include <stdio.h>
 
 #include "psammite.h"
 #include "asm_macros.h"
@@ -19,7 +19,7 @@ void test_vm_memory_initialization() {
   PsammiteVM vm = {0};
   psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
   VM_ASSERT(vm._memory != NULL);
-  VM_ASSERT(vm.pc == 0);
+  VM_ASSERT(vm._pc == 0);
   psammite_free_memory(&vm);
 }
 
@@ -32,7 +32,7 @@ void test_vm_endianness() {
   vm._memory[3] = 0xAA;
   int status = psammite_fetch_to_ir(&vm);
   VM_ASSERT(status == 0);
-  VM_ASSERT(vm.ir == 0xAABBCCDD);
+  VM_ASSERT(vm._ir == 0xAABBCCDD);
   psammite_free_memory(&vm);
 }
 
@@ -400,7 +400,7 @@ void test_vm_jal() {
   VM_ASSERT(status == 0);
   VM_ASSERT(psammite_read_register(&vm,R4) == 4);
   VM_ASSERT(psammite_read_register(&vm,R5) == 5);
-  VM_ASSERT(vm.pc==16);
+  VM_ASSERT(vm._pc==16);
 
   psammite_free_memory(&vm);
 }
@@ -420,7 +420,7 @@ void test_vm_jalr() {
   VM_ASSERT(status == 0);
   VM_ASSERT(psammite_read_register(&vm,R4) == 8);
   VM_ASSERT(psammite_read_register(&vm,R5) == 5);
-  VM_ASSERT(vm.pc==20);
+  VM_ASSERT(vm._pc==20);
 
   psammite_free_memory(&vm);
 }

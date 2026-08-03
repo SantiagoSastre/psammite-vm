@@ -1,6 +1,8 @@
 #ifndef PSAMMITE_ASM_MACROS_HEADER
 #define PSAMMITE_ASM_MACROS_HEADER
 
+#include "core.h"
+
 
 #define CHUNK_ENCODER(opcode, rd, chunk, zero_flag ,immediate) \
     (uint8_t) ((immediate) & 0xFF), \
@@ -45,6 +47,9 @@
     (uint8_t) ((((uint64_t)(constant)) >> 40) & 0xFF), \
     (uint8_t) ((((uint64_t)(constant)) >> 48) & 0xFF), \
     (uint8_t) ((((uint64_t)(constant)) >> 56) & 0xFF)
+
+
+#define DOUBLE_BITS(d) ((union PsammiteFloat){.f64 = d}.bits)
 
 
 #define ASM_HALT R_ENCODER(EXECUTE,0,0,0,SYSTEM,HALT)

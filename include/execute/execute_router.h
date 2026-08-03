@@ -1,11 +1,9 @@
 #ifndef PSAMMITE_EXECUTE_INSTRUCTIONS_HEADER
 #define PSAMMITE_EXECUTE_INSTRUCTIONS_HEADER
 
-#include <stdio.h>
 #include "core.h"
 #include "opcodes.h"
 #include "decoders.h"
-#include "status_codes.h"
 #include "imath.h"
 #include "system.h"
 
@@ -30,8 +28,7 @@ static inline PsammiteStatusCodes psammite_route_execute(PsammiteVM *vm, uint32_
     case IMATH:
       return psammite_imath_execute(vm, func7, rs1, rs2, rd);
     default:
-      fprintf(stderr, "Unrecognized Function 4 parameter in Execute instruction, halting.\n");
-      return VM_ERR_GENERIC;
+      return VM_ERROR_UNRECOGNIZED;
   }
 }
 

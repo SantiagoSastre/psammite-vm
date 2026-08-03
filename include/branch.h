@@ -4,7 +4,6 @@
 
 #include "core.h"
 #include "decoders.h"
-#include "status_codes.h"
 
 
 static inline PsammiteStatusCodes psammite_beq(PsammiteVM *vm, uint32_t instruction) {
@@ -15,7 +14,7 @@ static inline PsammiteStatusCodes psammite_beq(PsammiteVM *vm, uint32_t instruct
     uint64_t val1 = psammite_read_register(vm, rs1);
     uint64_t val2 = psammite_read_register(vm, rs2);
     if (val1 == val2) {
-        vm->pc = vm->pc + ((uint64_t) signed_offset);
+        vm->_pc = vm->_pc + ((uint64_t) signed_offset);
     }
 
     return VM_OK;
@@ -29,7 +28,7 @@ static inline PsammiteStatusCodes psammite_bne(PsammiteVM *vm, uint32_t instruct
     uint64_t val1 = psammite_read_register(vm, rs1);
     uint64_t val2 = psammite_read_register(vm, rs2);
     if (val1 != val2) {
-        vm->pc = vm->pc + ((uint64_t) signed_offset);
+        vm->_pc = vm->_pc + ((uint64_t) signed_offset);
     }
 
     return VM_OK;
@@ -43,7 +42,7 @@ static inline PsammiteStatusCodes psammite_blt(PsammiteVM *vm, uint32_t instruct
     uint64_t val1 = psammite_read_register(vm, rs1);
     uint64_t val2 = psammite_read_register(vm, rs2);
     if (val1 < val2) {
-        vm->pc = vm->pc + ((uint64_t) signed_offset);
+        vm->_pc = vm->_pc + ((uint64_t) signed_offset);
     }
 
     return VM_OK;
@@ -57,7 +56,7 @@ static inline PsammiteStatusCodes psammite_bge(PsammiteVM *vm, uint32_t instruct
     uint64_t val1 = psammite_read_register(vm, rs1);
     uint64_t val2 = psammite_read_register(vm, rs2);
     if (val1 >= val2) {
-        vm->pc = vm->pc + ((uint64_t) signed_offset);
+        vm->_pc = vm->_pc + ((uint64_t) signed_offset);
     }
 
     return VM_OK;
@@ -71,7 +70,7 @@ static inline PsammiteStatusCodes psammite_sblt(PsammiteVM *vm, uint32_t instruc
     int64_t val1 = (int64_t) psammite_read_register(vm, rs1);
     int64_t val2 = (int64_t) psammite_read_register(vm, rs2);
     if (val1 < val2) {
-        vm->pc = vm->pc + ((uint64_t) signed_offset);
+        vm->_pc = vm->_pc + ((uint64_t) signed_offset);
     }
 
     return VM_OK;
@@ -85,7 +84,7 @@ static inline PsammiteStatusCodes psammite_sbge(PsammiteVM *vm, uint32_t instruc
     int64_t val1 = (int64_t) psammite_read_register(vm, rs1);
     int64_t val2 = (int64_t) psammite_read_register(vm, rs2);
     if (val1 >= val2) {
-        vm->pc = vm->pc + ((uint64_t) signed_offset);
+        vm->_pc = vm->_pc + ((uint64_t) signed_offset);
     }
 
     return VM_OK;

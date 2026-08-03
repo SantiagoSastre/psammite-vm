@@ -30,7 +30,10 @@ typedef enum {
   BLT     = 0x19,
   BGE     = 0x1A,
   SBLT    = 0x1B,
-  SBGE    = 0x1C
+  SBGE    = 0x1C,
+  // Float instructions
+  LF64 = 0x1D,
+  SF64 = 0x1E,
 } Opcodes;
 
 typedef enum {
