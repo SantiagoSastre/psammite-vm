@@ -1,6 +1,4 @@
-#ifndef PSAMMITE_IMATH
-#define PSAMMITE_IMATH
-
+#pragma once
 
 #include "core.h"
 #include "opcodes.h"
@@ -93,4 +91,3 @@ static inline PsammiteStatusCodes psammite_imath_execute(PsammiteVM *vm, uint8_t
 }
 
 
-#endif

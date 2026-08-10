@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_EXECUTE_INSTRUCTIONS_HEADER
-#define PSAMMITE_EXECUTE_INSTRUCTIONS_HEADER
+#pragma once
 
 #include "core.h"
 #include "opcodes.h"
@@ -31,5 +30,3 @@ static inline PsammiteStatusCodes psammite_route_execute(PsammiteVM *vm, uint32_
       return VM_ERROR_UNRECOGNIZED;
   }
 }
-
-#endif

@@ -1,6 +1,4 @@
-#ifndef PSAMMITE_SYSTEM
-#define PSAMMITE_SYSTEM
-
+#pragma once
 
 #include "core.h"
 #include "opcodes.h"
@@ -23,4 +21,3 @@ static inline PsammiteStatusCodes psammite_system_execute(PsammiteVM *vm, uint8_
 
 
 
-#endif

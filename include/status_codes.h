@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_STATUS_CODES_HEADER
-#define PSAMMITE_STATUS_CODES_HEADER
+#pragma once
 
 
 typedef enum {
@@ -16,4 +15,3 @@ typedef enum {
   VM_ERROR_MEM_BOUNDS,
 } PsammiteStatusCodes;
 
-#endif

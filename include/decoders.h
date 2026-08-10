@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_DECODERS_HEADER
-#define PSAMMITE_DECODERS_HEADER
+#pragma once
 
 #include <stdint.h>
 
@@ -112,4 +111,3 @@ static inline uint16_t psammite_decode_chunk_immediate(uint32_t instruction) {
 
 
 
-#endif

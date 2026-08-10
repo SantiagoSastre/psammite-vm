@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_JUMP_INSTRUCTIONS_HEADER
-#define PSAMMITE_JUMP_INSTRUCTIONS_HEADER
+#pragma once
 
 
 #include "core.h"
@@ -30,4 +29,3 @@ static inline PsammiteStatusCodes psammite_jalr(PsammiteVM *vm, uint32_t instruc
 
 
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_HEADER
-#define PSAMMITE_HEADER
+#pragma once
 
 
 // Psammite uses arithmetic right shift for sign-extending immediate offsets.
@@ -144,4 +143,3 @@ static inline PsammiteVMState psammite_step(PsammiteVM *vm) {
 }
 
 
-#endif

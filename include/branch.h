@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_BRANCH_INSTRUCTIONS_HEADER
-#define PSAMMITE_BRANCH_INSTRUCTIONS_HEADER
+#pragma once
 
 
 #include "core.h"
@@ -90,4 +89,3 @@ static inline PsammiteStatusCodes psammite_sbge(PsammiteVM *vm, uint32_t instruc
     return VM_OK;
 }
 
-#endif

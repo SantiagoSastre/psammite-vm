@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_LOAD_STORE_INSTRUCTIONS_HEADER
-#define PSAMMITE_LOAD_STORE_INSTRUCTIONS_HEADER
+#pragma once
 
 
 #include "core.h"
@@ -253,4 +252,3 @@ static inline PsammiteStatusCodes psammite_sf64(PsammiteVM *vm, uint32_t instruc
 }
 
 
-#endif

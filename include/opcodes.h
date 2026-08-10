@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_OPCODES_HEADER
-#define PSAMMITE_OPCODES_HEADER
+#pragma once
 
 typedef enum {
   EXECUTE = 0x00,
@@ -39,6 +38,7 @@ typedef enum {
 typedef enum {
   SYSTEM = 0x00,
   IMATH = 0x01,
+  FMATH = 0x02,
 
 } ExecuteCategoryCode;
 
@@ -66,4 +66,10 @@ typedef enum {
 
 } IMathCodes;
 
-#endif
+typedef enum {
+  IMF64 = 0x01,
+  F64MI = 0x02,
+  ICF64 = 0x03,
+  F64CI = 0x04,
+} FMathCodes;
+

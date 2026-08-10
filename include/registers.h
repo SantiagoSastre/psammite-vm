@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_REGISTERS_HEADER
-#define PSAMMITE_REGISTERS_HEADER
+#pragma once
 
 #define NUM_REGISTER 32
 
@@ -76,4 +75,3 @@ typedef enum {
 } PsammiteFRegister;
 
 
-#endif

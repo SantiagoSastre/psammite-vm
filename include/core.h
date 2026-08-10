@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_CORE_HEADER
-#define PSAMMITE_CORE_HEADER
+#pragma once
 
 #include <stdint.h>
 #include <stddef.h>
@@ -121,4 +120,3 @@ static inline PsammiteStatusCodes psammite_fetch_to_ir(PsammiteVM *vm) {
 }
 
 
-#endif

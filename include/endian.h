@@ -1,6 +1,4 @@
-#ifndef PSAMMITE_ENDIAN_HEADER
-#define PSAMMITE_ENDIAN_HEADER
-
+#pragma once
 
 
 #if defined(_MSC_VER)
@@ -32,4 +30,3 @@
 #define HOST_TO_VM32(instruction) VM_TO_HOST32(instruction)
 #define HOST_TO_VM64(instruction) VM_TO_HOST64(instruction)
 
-#endif

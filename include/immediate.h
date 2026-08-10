@@ -1,5 +1,4 @@
-#ifndef PSAMMITE_IMMEDIATE_INSTRUCTIONS_HEADER
-#define PSAMMITE_IMMEDIATE_INSTRUCTIONS_HEADER
+#pragma once
 
 
 #include "core.h"
@@ -86,5 +85,3 @@ static inline PsammiteStatusCodes psammite_srai(PsammiteVM *vm, uint32_t instruc
     return VM_OK;
 
 }
-
-#endif
