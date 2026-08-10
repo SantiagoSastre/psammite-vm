@@ -302,13 +302,13 @@ void test_vm_lf64()
   psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
   uint8_t program[] = {
       ASM_LI(R4, 8),
-      ASM_LF64(R4, R5, 4),
+      ASM_LF64(R4, FR5, 4),
       ASM_HALT,
       ASM_64_BIT_CONST(0x40091EB851EB851F)};
   psammite_load_program(&vm, program, sizeof(program));
   int status = psammite_run(&vm);
   VM_EXPECT(status == 0);
-  VM_EXPECT(psammite_read_f_register(&vm, R5).f64 == 3.14);
+  VM_EXPECT(psammite_read_f_register(&vm, FR5).f64 == 3.14);
 
   psammite_free_memory(&vm);
 }
@@ -415,13 +415,13 @@ void test_vm_sf64()
   psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
   uint8_t program[] = {
       ASM_LI(R4, 12),
-      ASM_SF64(R5, R4, 0),
+      ASM_SF64(FR5, R4, 0),
       ASM_HALT,
   };
   PsammiteFloat value;
   value.f64 = 3.14;
   psammite_load_program(&vm, program, sizeof(program));
-  psammite_write_f_register(&vm, R5, value);
+  psammite_write_f_register(&vm, FR5, value);
   int vm_status = psammite_run(&vm);
   uint64_t ram_value;
   PsammiteStatusCodes read_status = psammite_read_memory64(&vm, 12, &ram_value);
