@@ -921,7 +921,8 @@ int main()
   test_vm_slli();
   test_vm_srli();
   test_vm_srai();
-  if (failed_tests > 0) {
+  if (failed_tests > 0)
+  {
     return 1;
   }
   return 0;

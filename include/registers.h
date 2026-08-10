@@ -2,7 +2,8 @@
 
 #define NUM_REGISTER 32
 
-typedef enum {
+typedef enum
+{
   ZR = 0,
   SP = 1,
   BP = 2,
@@ -37,9 +38,8 @@ typedef enum {
   R31 = 31
 } PsammiteRegister;
 
-
-
-typedef enum {
+typedef enum
+{
   FR0 = 0,
   FR1 = 1,
   FR2 = 2,
@@ -73,5 +73,3 @@ typedef enum {
   FR30 = 30,
   FR31 = 31
 } PsammiteFRegister;
-
-

@@ -31,7 +31,7 @@ static inline PsammiteStatusCodes psammite_fmath_execute(PsammiteVM *vm, uint8_t
         return VM_OK;
     }
     case ICF64:
-    {   
+    {
         int is_signed = rs2 & 0x1;
         PsammiteFloat value;
         if (is_signed == 0)
