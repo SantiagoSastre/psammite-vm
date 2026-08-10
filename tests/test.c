@@ -328,7 +328,7 @@ void test_vm_s64()
   };
   psammite_load_program(&vm, program, sizeof(program));
   int vm_status = psammite_run(&vm);
-  uint64_t ram_value;
+  uint64_t ram_value = 0;
   PsammiteStatusCodes read_status = psammite_read_memory64(&vm, 28, &ram_value);
   VM_EXPECT(vm_status == 0);
   VM_EXPECT(read_status == VM_OK);
@@ -352,7 +352,7 @@ void test_vm_s32()
   };
   psammite_load_program(&vm, program, sizeof(program));
   int vm_status = psammite_run(&vm);
-  uint64_t ram_value;
+  uint64_t ram_value = 0;
   PsammiteStatusCodes read_status = psammite_read_memory64(&vm, 28, &ram_value);
   VM_EXPECT(vm_status == 0);
   VM_EXPECT(read_status == VM_OK);
@@ -376,7 +376,7 @@ void test_vm_s16()
   };
   psammite_load_program(&vm, program, sizeof(program));
   int vm_status = psammite_run(&vm);
-  uint64_t ram_value;
+  uint64_t ram_value = 0;
   PsammiteStatusCodes read_status = psammite_read_memory64(&vm, 28, &ram_value);
   VM_EXPECT(vm_status == 0);
   VM_EXPECT(read_status == VM_OK);
@@ -400,7 +400,7 @@ void test_vm_s8()
   };
   psammite_load_program(&vm, program, sizeof(program));
   int vm_status = psammite_run(&vm);
-  uint64_t ram_value;
+  uint64_t ram_value = 0;
   PsammiteStatusCodes read_status = psammite_read_memory64(&vm, 28, &ram_value);
   VM_EXPECT(vm_status == 0);
   VM_EXPECT(read_status == VM_OK);
@@ -423,7 +423,7 @@ void test_vm_sf64()
   psammite_load_program(&vm, program, sizeof(program));
   psammite_write_f_register(&vm, FR5, value);
   int vm_status = psammite_run(&vm);
-  uint64_t ram_value;
+  uint64_t ram_value = 0;
   PsammiteStatusCodes read_status = psammite_read_memory64(&vm, 12, &ram_value);
   VM_EXPECT(vm_status == 0);
   VM_EXPECT(read_status == VM_OK);
