@@ -26,7 +26,12 @@ target_compile_options(psammite_compiler_config INTERFACE
 
 add_library(psammite_vm_lib STATIC  src/psammite.c)
 target_include_directories(psammite_vm_lib PUBLIC include)
-target_link_libraries(psammite_vm_lib PRIVATE psammite_compiler_config m)
+target_link_libraries(psammite_vm_lib PRIVATE psammite_compiler_config)
+
+if(NOT MSVC)
+    target_link_libraries(psammite_vm_lib PRIVATE m)
+endif()
+
 add_executable(psammite_vm  src/main.c)
 target_link_libraries(psammite_vm PRIVATE psammite_compiler_config psammite_vm_lib)
 add_executable(psammite_vm_test tests/test.c)
