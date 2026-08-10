@@ -16,14 +16,6 @@
 #include "immediate.h"
 
 
-
-
-
-
-
-
-
-
 int psammite_reset(PsammiteVM *vm);
 int psammite_init(PsammiteVM *vm, size_t memory_size);
 void psammite_free_memory(PsammiteVM *vm);
@@ -34,19 +26,12 @@ PsammiteVMState psammite_get_status(const PsammiteVM *vm);
 int psammite_run(PsammiteVM *vm);
 
 
-
-
-
-
-
-
-
-
-
 static inline PsammiteVMState psammite_step(PsammiteVM *vm) {
     PsammiteStatusCodes code = VM_OK;
-  if (psammite_fetch_to_ir(vm)!=VM_OK) {
+    code = psammite_fetch_to_ir(vm);
+  if (code != VM_OK) {
     vm->_status = VM_STATE_PANIC;
+    vm->_panic_motive = code;
     return vm->_status;
   }
   uint32_t instruction = vm->_ir;
@@ -151,6 +136,8 @@ static inline PsammiteVMState psammite_step(PsammiteVM *vm) {
   }
   if (code != VM_OK) {
     vm->_status = VM_STATE_PANIC;
+    vm->_panic_motive = code;
+
   }
   return vm->_status;
   

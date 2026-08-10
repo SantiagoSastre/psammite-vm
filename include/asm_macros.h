@@ -49,7 +49,6 @@
     (uint8_t) ((((uint64_t)(constant)) >> 56) & 0xFF)
 
 
-#define DOUBLE_BITS(d) ((union PsammiteFloat){.f64 = d}.bits)
 
 
 #define ASM_HALT R_ENCODER(EXECUTE,0,0,0,SYSTEM,HALT)
@@ -89,11 +88,14 @@
 #define ASM_L16S(rs, rd, offset) I_ENCODER(L16S, rs, rd, offset)
 #define ASM_L8(rs, rd, offset) I_ENCODER(L8, rs, rd, offset)
 #define ASM_L8S(rs, rd, offset) I_ENCODER(L8S, rs, rd, offset)
+#define ASM_LF64(rs, rd, offset) I_ENCODER(LF64, rs, rd, offset)
 
 #define ASM_S64(rs, rmemd, offset) I_ENCODER(S64, rs, rmemd, offset)
 #define ASM_S32(rs, rmemd, offset) I_ENCODER(S32, rs, rmemd, offset)
 #define ASM_S16(rs, rmemd, offset) I_ENCODER(S16, rs, rmemd, offset)
 #define ASM_S8(rs, rmemd, offset) I_ENCODER(S8, rs, rmemd, offset)
+#define ASM_SF64(rs, rmemd, offset) I_ENCODER(SF64, rs, rmemd, offset)
+
 
 #define ASM_ADDI(rs,rd,immediate) I_ENCODER(ADDI,rs,rd,immediate)
 #define ASM_ANDI(rs,rd,immediate) I_ENCODER(ANDI,rs,rd,immediate)
