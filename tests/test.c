@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "psammite.h"
 #include "asm_macros.h"
@@ -865,12 +866,119 @@ void test_vm_srai()
   uint8_t program[] = {
       ASM_SLI(R4, -8), // 0xfffffffffffffff8
       ASM_SRAI(R4, R6, 1),
-
       ASM_HALT};
   psammite_load_program(&vm, program, sizeof(program));
   int status = psammite_run(&vm);
   VM_EXPECT(status == 0);
   VM_EXPECT(psammite_read_register(&vm, R6) == 0xFFFFFFFFFFFFFFFCULL);
+
+  psammite_free_memory(&vm);
+}
+
+void test_vm_imf64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_L64(ZR, R5, 12),
+      ASM_IMF64(R5, FR0),
+      ASM_HALT,
+      ASM_64_BIT_CONST(0xFCFBFAFDFEFCFBFCULL)};
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(psammite_read_f_register(&vm, FR0).bits == 0xFCFBFAFDFEFCFBFCULL);
+
+  psammite_free_memory(&vm);
+}
+
+void test_vm_f64mi()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_LF64(ZR, FR0, 12),
+      ASM_F64MI(FR0, R4),
+      ASM_HALT,
+      ASM_64_BIT_CONST(0xFCFBFAFDFEFCFBFCULL)};
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(psammite_read_register(&vm, R4) == 0xFCFBFAFDFEFCFBFCULL);
+
+  psammite_free_memory(&vm);
+}
+
+void test_vm_icf64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_LI(R4, 5),
+      ASM_SLI(R5, -5),
+      ASM_ICF64(R4, 0, FR0),
+      ASM_ICF64(R5, 1, FR1),
+      ASM_ICF64(R5, 0, FR2),
+      ASM_HALT,
+  };
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR0).f64 - 5.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR1).f64 + 5.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR2).f64 - 18446744073709552000.0) < 0.0000001);
+
+  psammite_free_memory(&vm);
+}
+
+void test_vm_f64ci()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_F64CI(FR0, TRUNCATION, 0, R4),
+      ASM_F64CI(FR1, CEIL, 0, R5),
+      ASM_F64CI(FR2, CEIL, 0, R6),
+      ASM_F64CI(FR3, FLOOR, 0, R7),
+      ASM_F64CI(FR4, FLOOR, 1, R8),
+      ASM_F64CI(FR5, MATH_ROUNDING, 0, R9),
+      ASM_F64CI(FR6, MATH_ROUNDING, 0, R10),
+      ASM_F64CI(FR7, MATH_ROUNDING, 1, R11),
+      ASM_F64CI(FR8, BANKER_ROUNDING, 0, R12),
+      ASM_F64CI(FR9, BANKER_ROUNDING, 0, R13),
+      ASM_F64CI(FR10, BANKER_ROUNDING, 0, R14),
+      ASM_HALT,
+  };
+  // to be truncated
+  vm._f_registers[FR0].f64 = 2.7;
+  // to be ceiled
+  vm._f_registers[FR1].f64 = 2.1;
+  vm._f_registers[FR2].f64 = 2.9;
+  // to be floored
+  vm._f_registers[FR3].f64 = 4.1;
+  vm._f_registers[FR4].f64 = -4.9;
+  // to be math rounded
+  vm._f_registers[FR5].f64 = 1.1;
+  vm._f_registers[FR6].f64 = 3.5;
+  vm._f_registers[FR7].f64 = -4.5;
+  // to be rounded with banker's rounding
+  vm._f_registers[FR8].f64 = 7.1;
+  vm._f_registers[FR9].f64 = 2.5;
+  vm._f_registers[FR10].f64 = 7.5;
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(psammite_read_register(&vm, R4) == 2);
+  VM_EXPECT(psammite_read_register(&vm, R5) == 3);
+  VM_EXPECT(psammite_read_register(&vm, R6) == 3);
+  VM_EXPECT(psammite_read_register(&vm, R7) == 4);
+  VM_EXPECT((int64_t)psammite_read_register(&vm, R8) == -5);
+  VM_EXPECT(psammite_read_register(&vm, R9) == 1);
+  VM_EXPECT(psammite_read_register(&vm, R10) == 4);
+  VM_EXPECT((int64_t)psammite_read_register(&vm, R11) == -5);
+  VM_EXPECT(psammite_read_register(&vm, R12) == 7);
+  VM_EXPECT(psammite_read_register(&vm, R13) == 2);
+  VM_EXPECT(psammite_read_register(&vm, R14) == 8);
 
   psammite_free_memory(&vm);
 }
@@ -921,6 +1029,10 @@ int main()
   test_vm_slli();
   test_vm_srli();
   test_vm_srai();
+  test_vm_imf64();
+  test_vm_f64mi();
+  test_vm_icf64();
+  test_vm_f64ci();
   if (failed_tests > 0)
   {
     return 1;
