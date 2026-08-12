@@ -77,4 +77,8 @@ typedef enum
   ICF64 = 0x03,
   F64CI = 0x04,
   FADD64 = 0x05,
+  FSUB64 = 0x06,
+  FMUL64 = 0x07,
+  FDIV64 = 0x08,
+  FSQRT64 = 0x09,
 } FMathCodes;

@@ -119,6 +119,30 @@ static inline PsammiteStatusCodes psammite_fmath_execute(PsammiteVM *vm, uint8_t
         psammite_write_f_register(vm, rd, result);
         return VM_OK;
     }
+    case FSUB64:
+    {
+        PsammiteFloat result = {.f64 = psammite_read_f_register(vm, rs1).f64 - psammite_read_f_register(vm, rs2).f64};
+        psammite_write_f_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FMUL64:
+    {
+        PsammiteFloat result = {.f64 = psammite_read_f_register(vm, rs1).f64 * psammite_read_f_register(vm, rs2).f64};
+        psammite_write_f_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FDIV64:
+    {   
+        PsammiteFloat result = {.f64 = psammite_read_f_register(vm, rs1).f64 / psammite_read_f_register(vm, rs2).f64};
+        psammite_write_f_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FSQRT64:
+    {   
+        PsammiteFloat result = {.f64 = sqrt(psammite_read_f_register(vm, rs1).f64)};
+        psammite_write_f_register(vm, rd, result);
+        return VM_OK;
+    }
     default:
         return VM_ERROR_UNRECOGNIZED;
     }

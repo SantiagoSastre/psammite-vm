@@ -98,6 +98,15 @@
 #define ASM_ICF64(rs, signed_flag, rd) R_ENCODER(EXECUTE, rs, ((signed_flag) & 0x1),rd, FMATH, ICF64)
 #define ASM_F64CI(rs,rounding_mode, signed_flag, rd) R_ENCODER(EXECUTE, rs, ( (((rounding_mode) & 0x7)<<1) | ((signed_flag) & 0x1)), rd, FMATH, F64CI)
 
+#define ASM_FADD64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FADD64)
+#define ASM_FSUB64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FSUB64)
+#define ASM_FMUL64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FMUL64)
+#define ASM_FDIV64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FDIV64)
+#define ASM_FSQRT64(rs1, rd) R_ENCODER(EXECUTE, rs1, 0, rd, FMATH, FSQRT64)
+
+
+
+
 
 #define ASM_MOV(rs, rd) I_ENCODER(ADDI, rs, rd, 0)                   // pseudo-instruction
 #define ASM_LI(rd, immediate) CHUNK_ENCODER(AC, rd, 0, 1, immediate) // pseudo-instruction

@@ -947,6 +947,8 @@ void test_vm_f64ci()
       ASM_F64CI(FR8, BANKER_ROUNDING, 0, R12),
       ASM_F64CI(FR9, BANKER_ROUNDING, 0, R13),
       ASM_F64CI(FR10, BANKER_ROUNDING, 0, R14),
+      ASM_F64CI(FR11, BANKER_ROUNDING, 0, R15),
+      ASM_F64CI(FR11, BANKER_ROUNDING, 1, R16),
       ASM_HALT,
   };
   // to be truncated
@@ -965,6 +967,7 @@ void test_vm_f64ci()
   vm._f_registers[FR8].f64 = 7.1;
   vm._f_registers[FR9].f64 = 2.5;
   vm._f_registers[FR10].f64 = 7.5;
+  vm._f_registers[FR11].f64 = INFINITY;
   psammite_load_program(&vm, program, sizeof(program));
   int status = psammite_run(&vm);
   VM_EXPECT(status == 0);
@@ -979,8 +982,41 @@ void test_vm_f64ci()
   VM_EXPECT(psammite_read_register(&vm, R12) == 7);
   VM_EXPECT(psammite_read_register(&vm, R13) == 2);
   VM_EXPECT(psammite_read_register(&vm, R14) == 8);
+  VM_EXPECT(psammite_read_register(&vm, R15) == UINT64_MAX);
+  VM_EXPECT(psammite_read_register(&vm, R16) == (uint64_t) INT64_MAX);
 
   psammite_free_memory(&vm);
+}
+
+void test_vm_fpu() {
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_IMF64(ZR,FR5),
+      ASM_FADD64(FR0,FR3, FR6),
+      ASM_FSUB64(FR0,FR3, FR7),
+      ASM_FMUL64(FR2,FR3, FR8),
+      ASM_FDIV64(FR4,FR1, FR9),
+      ASM_FDIV64(FR0,FR5, FR10),
+      ASM_FSQRT64(FR11,FR12),
+      ASM_HALT,
+  };
+    vm._f_registers[FR0].f64 = 3.0;
+  vm._f_registers[FR1].f64 = 2.0;
+  vm._f_registers[FR2].f64 = -3.5;
+  vm._f_registers[FR3].f64 = -4.2;
+  vm._f_registers[FR4].f64 = 4.5;
+  vm._f_registers[FR11].f64 = 16.0;
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  printf("%lf\n", vm._f_registers[FR10].f64);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR6).f64 + 1.2) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR7).f64 -  7.2) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR8).f64 - 14.7) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR9).f64 - 2.25) < 0.0000001);
+  VM_EXPECT(isinf(psammite_read_f_register(&vm, FR10).f64));
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR12).f64 - 4.0) < 0.0000001);
 }
 
 int main()
@@ -1033,6 +1069,7 @@ int main()
   test_vm_f64mi();
   test_vm_icf64();
   test_vm_f64ci();
+  test_vm_fpu();
   if (failed_tests > 0)
   {
     return 1;
