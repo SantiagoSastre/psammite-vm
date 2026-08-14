@@ -81,4 +81,13 @@ typedef enum
   FMUL64 = 0x07,
   FDIV64 = 0x08,
   FSQRT64 = 0x09,
+  FSI64 = 0x0A,
+  FSIN64 = 0x0B,
+  FSIX64 = 0x0C,
+  FMIN64 = 0x0D,
+  FMAX64 = 0x0E,
+  FEQ64 = 0x0F,
+  FLT64 = 0x10,
+  FLE64 = 0x11,
+  FCLASS64 = 0x12,
 } FMathCodes;

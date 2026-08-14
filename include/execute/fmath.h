@@ -132,16 +132,131 @@ static inline PsammiteStatusCodes psammite_fmath_execute(PsammiteVM *vm, uint8_t
         return VM_OK;
     }
     case FDIV64:
-    {   
+    {
         PsammiteFloat result = {.f64 = psammite_read_f_register(vm, rs1).f64 / psammite_read_f_register(vm, rs2).f64};
         psammite_write_f_register(vm, rd, result);
         return VM_OK;
     }
     case FSQRT64:
-    {   
+    {
         PsammiteFloat result = {.f64 = sqrt(psammite_read_f_register(vm, rs1).f64)};
         psammite_write_f_register(vm, rd, result);
         return VM_OK;
+    }
+    case FSI64:
+    {
+        PsammiteFloat result = {.f64 = copysign(psammite_read_f_register(vm, rs1).f64, psammite_read_f_register(vm, rs2).f64)};
+        psammite_write_f_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FSIN64:
+    {
+        PsammiteFloat result = {.f64 = copysign(psammite_read_f_register(vm, rs1).f64, -psammite_read_f_register(vm, rs2).f64)};
+        psammite_write_f_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FSIX64:
+    {
+        PsammiteFloat val1 = {.f64 = psammite_read_f_register(vm, rs1).f64};
+        PsammiteFloat val2 = {.f64 = psammite_read_f_register(vm, rs2).f64};
+        double final_sign = signbit(val1.f64) != signbit(val2.f64) ? -1.0 : 1.0;
+
+        PsammiteFloat result = {.f64 = copysign(val1.f64, final_sign)};
+        psammite_write_f_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FMAX64:
+    {
+        PsammiteFloat result = {.f64 = fmax(psammite_read_f_register(vm, rs1).f64, psammite_read_f_register(vm, rs2).f64)};
+        psammite_write_f_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FMIN64:
+    {
+        PsammiteFloat result = {.f64 = fmin(psammite_read_f_register(vm, rs1).f64, psammite_read_f_register(vm, rs2).f64)};
+        psammite_write_f_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FEQ64:
+    {
+        PsammiteFloat val1 = psammite_read_f_register(vm, rs1);
+        PsammiteFloat val2 = psammite_read_f_register(vm, rs2);
+        int result = val1.f64 == val2.f64 ? 1 : 0;
+        psammite_write_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FLT64:
+    {
+        PsammiteFloat val1 = psammite_read_f_register(vm, rs1);
+        PsammiteFloat val2 = psammite_read_f_register(vm, rs2);
+        int result = val1.f64 < val2.f64 ? 1 : 0;
+        psammite_write_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FLE64:
+    {
+        PsammiteFloat val1 = psammite_read_f_register(vm, rs1);
+        PsammiteFloat val2 = psammite_read_f_register(vm, rs2);
+        int result = val1.f64 <= val2.f64 ? 1 : 0;
+        psammite_write_register(vm, rd, result);
+        return VM_OK;
+    }
+    case FCLASS64:
+    {
+        PsammiteFloat val = psammite_read_f_register(vm, rs1);
+        uint64_t result = 0;
+        switch (fpclassify(val.f64))
+        {
+        case FP_INFINITE:
+            if (signbit(val.f64))
+            {
+                result = 1;
+            }
+            else
+            {
+                result = 1 << 7;
+            }
+            break;
+        case FP_NAN:
+        {
+            result = 1 << 8;
+            break;
+        }
+        case FP_NORMAL:
+            if (signbit(val.f64))
+            {
+                result = 1 << 1;
+            }
+            else
+            {
+                result = 1 << 6;
+            }
+            break;
+        case FP_SUBNORMAL:
+            if (signbit(val.f64))
+            {
+                result = 1 << 2;
+            }
+            else
+            {
+                result = 1 << 5;
+            }
+            break;
+        case FP_ZERO:
+            if (signbit(val.f64))
+            {
+                result = 1 << 3;
+            }
+            else
+            {
+                result = 1 << 4;
+            }
+            break;
+        default:
+            break;
+        }
+    psammite_write_register(vm, rd, result);
+    return VM_OK;
     }
     default:
         return VM_ERROR_UNRECOGNIZED;
