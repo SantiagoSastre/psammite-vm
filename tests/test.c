@@ -1,23 +1,7 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-
-#include "psammite.h"
-#include "asm_macros.h"
+#include "test_utils.h"
 
 static int failed_tests = 0;
 
-#define VM_EXPECT(condition)                                                  \
-  do                                                                          \
-  {                                                                           \
-    if (!(condition))                                                         \
-    {                                                                         \
-      fprintf(stderr, "Test:     %s\n", __func__);                            \
-      fprintf(stderr, "Location: %s:%d\n", __FILE__, __LINE__);               \
-      fprintf(stderr, "[PSAMMITE ERROR] Assertion failed: %s\n", #condition); \
-      failed_tests++;                                                         \
-    }                                                                         \
-  } while (0)
 
 void test_vm_memory_initialization()
 {
@@ -45,14 +29,14 @@ void test_vm_endianness()
 void test_vm_get_memory_size()
 {
   PsammiteVM vm = {0};
-  psammite_init(&vm, 0x100000);
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
   uint8_t program[] = {
       ASM_GET_MEMORY_SIZE(R4),
       ASM_HALT};
   psammite_load_program(&vm, program, sizeof(program));
   int status = psammite_run(&vm);
   VM_EXPECT(status == 0);
-  VM_EXPECT(psammite_read_register(&vm, R4) == 0x100000);
+  VM_EXPECT(psammite_read_register(&vm, R4) == PSAMMITE_MIN_MEM_SIZE);
 
   psammite_free_memory(&vm);
 }
@@ -94,7 +78,8 @@ void test_vm_oob()
   PsammiteVM vm = {0};
   psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
   uint8_t program[] = {
-      ASM_LI(R4, 0xFFFF),
+      ASM_AC(R4,0, 0xFFFF),
+      ASM_AC(R4,1, 0xFFFF),
       ASM_L64(R4, R5, 0),
       ASM_HALT};
   psammite_load_program(&vm, program, sizeof(program));
@@ -1010,7 +995,6 @@ void test_vm_fpu()
   vm._f_registers[FR11].f64 = 16.0;
   psammite_load_program(&vm, program, sizeof(program));
   int status = psammite_run(&vm);
-  printf("%lf\n", vm._f_registers[FR10].f64);
   VM_EXPECT(status == 0);
   VM_EXPECT(fabs(psammite_read_f_register(&vm, FR6).f64 + 1.2) < 0.0000001);
   VM_EXPECT(fabs(psammite_read_f_register(&vm, FR7).f64 - 7.2) < 0.0000001);
@@ -1019,6 +1003,238 @@ void test_vm_fpu()
   VM_EXPECT(isinf(psammite_read_f_register(&vm, FR10).f64));
   VM_EXPECT(fabs(psammite_read_f_register(&vm, FR12).f64 - 4.0) < 0.0000001);
 }
+
+void test_vm_fsi64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_FSI64(FR0,FR1,FR4),
+      ASM_FSI64(FR2,FR1,FR5),
+      ASM_FSI64(FR0,FR3,FR6),
+      ASM_FSI64(FR1,FR0,FR7),
+      ASM_HALT,
+  };
+  vm._f_registers[FR0].f64 = 3.0;
+  vm._f_registers[FR1].f64 = -2.0;
+  vm._f_registers[FR2].f64 = -3.0;
+  vm._f_registers[FR3].f64 = 2.0;
+
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR4).f64 + 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR5).f64 + 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR6).f64 - 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR7).f64 - 2.0) < 0.0000001);
+
+}
+void test_vm_fsin64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_FSIN64(FR0,FR1,FR4),
+      ASM_FSIN64(FR2,FR1,FR5),
+      ASM_FSIN64(FR0,FR3,FR6),
+      ASM_FSIN64(FR1,FR0,FR7),
+      ASM_HALT,
+  };
+  vm._f_registers[FR0].f64 = 3.0;
+  vm._f_registers[FR1].f64 = -2.0;
+  vm._f_registers[FR2].f64 = -3.0;
+  vm._f_registers[FR3].f64 = 2.0;
+
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR4).f64 - 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR5).f64 - 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR6).f64 + 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR7).f64 + 2.0) < 0.0000001);
+
+}
+
+void test_vm_fsix64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_FSIX64(FR0,FR1,FR4),
+      ASM_FSIX64(FR2,FR1,FR5),
+      ASM_FSIX64(FR0,FR3,FR6),
+      ASM_FSIX64(FR1,FR0,FR7),
+      ASM_HALT,
+  };
+  vm._f_registers[FR0].f64 = 3.0;
+  vm._f_registers[FR1].f64 = -2.0;
+  vm._f_registers[FR2].f64 = -3.0;
+  vm._f_registers[FR3].f64 = 2.0;
+
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR4).f64 + 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR5).f64 - 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR6).f64 - 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR7).f64 + 2.0) < 0.0000001);
+
+}
+
+void test_vm_fmin64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_FMIN64(FR0,FR1,FR4),
+      ASM_FMIN64(FR2,FR1,FR5),
+      ASM_FMIN64(FR0,FR3,FR6),
+      ASM_HALT,
+  };
+  vm._f_registers[FR0].f64 = 3.0;
+  vm._f_registers[FR1].f64 = -2.0;
+  vm._f_registers[FR2].f64 = -2.0;
+  vm._f_registers[FR3].f64 = 2.0;
+
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR4).f64 + 2.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR5).f64 + 2.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR6).f64 - 2.0) < 0.0000001);
+}
+
+void test_vm_fmax64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_FMAX64(FR0,FR1,FR4),
+      ASM_FMAX64(FR2,FR1,FR5),
+      ASM_FMAX64(FR0,FR3,FR6),
+      ASM_HALT,
+  };
+  vm._f_registers[FR0].f64 = 3.0;
+  vm._f_registers[FR1].f64 = -2.0;
+  vm._f_registers[FR2].f64 = -2.0;
+  vm._f_registers[FR3].f64 = 2.0;
+
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR4).f64 - 3.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR5).f64 + 2.0) < 0.0000001);
+  VM_EXPECT(fabs(psammite_read_f_register(&vm, FR6).f64 - 3.0) < 0.0000001);
+}
+
+void test_vm_feq64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_FEQ64(FR0,FR1,R4),
+      ASM_FEQ64(FR1,FR1,R5),
+      ASM_HALT,
+  };
+  vm._f_registers[FR0].f64 = 3.0;
+  vm._f_registers[FR1].f64 = -2.0;
+
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(psammite_read_register(&vm, R4) == 0);
+  VM_EXPECT(psammite_read_register(&vm, R5) == 1);
+
+}
+
+void test_vm_flt64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_FLT64(FR0,FR1,R4),
+      ASM_FLT64(FR1,FR1,R5),
+      ASM_FLT64(FR1,FR0,R6),
+      ASM_HALT,
+  };
+  vm._f_registers[FR0].f64 = 3.0;
+  vm._f_registers[FR1].f64 = -2.0;
+
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(psammite_read_register(&vm, R4) == 0);
+  VM_EXPECT(psammite_read_register(&vm, R5) == 0);
+  VM_EXPECT(psammite_read_register(&vm, R6) == 1);
+
+}
+
+void test_vm_fle64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_FLE64(FR0,FR1,R4),
+      ASM_FLE64(FR1,FR1,R5),
+      ASM_FLE64(FR1,FR0,R6),
+      ASM_HALT,
+  };
+  vm._f_registers[FR0].f64 = 3.0;
+  vm._f_registers[FR1].f64 = -2.0;
+
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(psammite_read_register(&vm, R4) == 0);
+  VM_EXPECT(psammite_read_register(&vm, R5) == 1);
+  VM_EXPECT(psammite_read_register(&vm, R6) == 1);
+
+}
+
+void test_vm_fclass64()
+{
+  PsammiteVM vm = {0};
+  psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
+  uint8_t program[] = {
+      ASM_FCLASS64(FR0, R4),
+      ASM_FCLASS64(FR1, R5),
+      ASM_FCLASS64(FR2, R6),
+      ASM_FCLASS64(FR3, R7),
+      ASM_FCLASS64(FR4, R8),
+      ASM_FCLASS64(FR5, R9),
+      ASM_FCLASS64(FR6, R10),
+      ASM_FCLASS64(FR7, R11),
+      ASM_FCLASS64(FR8, R12),
+      ASM_HALT,
+  };
+  vm._f_registers[FR0].f64 = -INFINITY;
+  vm._f_registers[FR1].f64 = -1.0;
+  vm._f_registers[FR2].f64 = -(DBL_MIN / 2);
+  vm._f_registers[FR3].f64 = -0.0;
+  vm._f_registers[FR4].f64 = 0.0;
+  vm._f_registers[FR5].f64 = DBL_MIN / 2;
+  vm._f_registers[FR6].f64 = 1.0;
+  vm._f_registers[FR7].f64 = INFINITY;
+  vm._f_registers[FR8].f64 = NAN;
+
+  psammite_load_program(&vm, program, sizeof(program));
+  int status = psammite_run(&vm);
+  VM_EXPECT(status == 0);
+  VM_EXPECT(psammite_read_register(&vm, R4) == 1);
+  VM_EXPECT(psammite_read_register(&vm, R5) == 1 << 1);
+  VM_EXPECT(psammite_read_register(&vm, R6) == 1 << 2);
+  VM_EXPECT(psammite_read_register(&vm, R7) == 1 << 3);
+  VM_EXPECT(psammite_read_register(&vm, R8) == 1 << 4);
+  VM_EXPECT(psammite_read_register(&vm, R9) == 1 << 5);
+  VM_EXPECT(psammite_read_register(&vm, R10) == 1 << 6);
+  VM_EXPECT(psammite_read_register(&vm, R11) == 1 << 7);
+  VM_EXPECT(psammite_read_register(&vm, R12) == 1 << 8);
+
+}
+
+/*
+#define ASM_FCLASS64(rs1, rd) R_ENCODER(EXECUTE, rs1, 0, rd, FMATH, FCLASS64)
+*/
 
 int main()
 {
@@ -1071,6 +1287,15 @@ int main()
   test_vm_icf64();
   test_vm_f64ci();
   test_vm_fpu();
+  test_vm_fsi64();
+  test_vm_fsin64();
+  test_vm_fsix64();
+  test_vm_fmin64();
+  test_vm_fmax64();
+  test_vm_feq64();
+  test_vm_flt64();
+  test_vm_fle64();
+  test_vm_fclass64();
   if (failed_tests > 0)
   {
     return 1;

@@ -38,6 +38,7 @@ int psammite_init(PsammiteVM *vm, size_t memory_size)
 void psammite_free_memory(PsammiteVM *vm)
 {
   free(vm->_memory);
+  vm->_memory_size = 0;
   vm->_memory = NULL;
 }
 

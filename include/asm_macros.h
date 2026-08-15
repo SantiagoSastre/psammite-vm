@@ -103,9 +103,22 @@
 #define ASM_FMUL64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FMUL64)
 #define ASM_FDIV64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FDIV64)
 #define ASM_FSQRT64(rs1, rd) R_ENCODER(EXECUTE, rs1, 0, rd, FMATH, FSQRT64)
+#define ASM_FSI64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FSI64)
+#define ASM_FSIN64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FSIN64)
+#define ASM_FSIX64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FSIX64)
+#define ASM_FMIN64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FMIN64)
+#define ASM_FMAX64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FMAX64)
+#define ASM_FEQ64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FEQ64)
+#define ASM_FLT64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FLT64)
+#define ASM_FLE64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs1, rs2, rd, FMATH, FLE64)
+#define ASM_FCLASS64(rs1, rd) R_ENCODER(EXECUTE, rs1, 0, rd, FMATH, FCLASS64)
 
+#define ASM_FMOV(rs1, rd) R_ENCODER(EXECUTE, rs1, rs1, rd, FMATH, FSI64) // pseudo-instruction
+#define ASM_FNEG(rs1, rd) R_ENCODER(EXECUTE, rs1, rs1, rd, FMATH, FSIN64) // pseudo-instruction
+#define ASM_FABS(rs1, rd) R_ENCODER(EXECUTE, rs1, rs1, rd, FMATH, FSIX64) // pseudo-instruction
 
-
+#define ASM_FGE64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs2, rs1, rd, FMATH, FLT64) // pseudo-instruction
+#define ASM_FGT64(rs1, rs2, rd) R_ENCODER(EXECUTE, rs2, rs1, rd, FMATH, FLE64) // pseudo-instruction
 
 
 #define ASM_MOV(rs, rd) I_ENCODER(ADDI, rs, rd, 0)                   // pseudo-instruction

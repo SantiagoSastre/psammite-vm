@@ -8,7 +8,7 @@
 #include "endian.h"
 #include "status_codes.h"
 
-#define PSAMMITE_MIN_MEM_SIZE 65536
+#define PSAMMITE_MIN_MEM_SIZE 0x100000
 
 typedef union
 {

@@ -157,8 +157,8 @@ static inline PsammiteStatusCodes psammite_fmath_execute(PsammiteVM *vm, uint8_t
     }
     case FSIX64:
     {
-        PsammiteFloat val1 = {.f64 = psammite_read_f_register(vm, rs1).f64};
-        PsammiteFloat val2 = {.f64 = psammite_read_f_register(vm, rs2).f64};
+        PsammiteFloat val1 = psammite_read_f_register(vm, rs1);
+        PsammiteFloat val2 = psammite_read_f_register(vm, rs2);
         double final_sign = signbit(val1.f64) != signbit(val2.f64) ? -1.0 : 1.0;
 
         PsammiteFloat result = {.f64 = copysign(val1.f64, final_sign)};
@@ -255,8 +255,8 @@ static inline PsammiteStatusCodes psammite_fmath_execute(PsammiteVM *vm, uint8_t
         default:
             break;
         }
-    psammite_write_register(vm, rd, result);
-    return VM_OK;
+        psammite_write_register(vm, rd, result);
+        return VM_OK;
     }
     default:
         return VM_ERROR_UNRECOGNIZED;
