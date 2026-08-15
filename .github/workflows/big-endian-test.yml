@@ -5,11 +5,7 @@ on:
     paths-ignore:
       - "README.md"
       - "DEVLOG.md"
-  pull_request:
-    branches: ["main"]
-    paths-ignore:
-      - "README.md"
-      - "DEVLOG.md"
+
 
 jobs:
   qemu:
