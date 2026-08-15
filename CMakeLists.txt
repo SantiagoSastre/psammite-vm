@@ -34,7 +34,7 @@ endif()
 
 add_executable(psammite_vm  src/main.c)
 target_link_libraries(psammite_vm PRIVATE psammite_compiler_config psammite_vm_lib)
-add_executable(psammite_vm_test tests/test.c)
+add_executable(psammite_vm_test tests/test.c tests/branch.c tests/core.c tests/float.c tests/integer_math.c tests/jump.c tests/memory.c tests/system.c)
 target_link_libraries(psammite_vm_test PRIVATE psammite_vm_lib psammite_compiler_config)
 add_test(NAME psammite_tests COMMAND psammite_vm_test)
 

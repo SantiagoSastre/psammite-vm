@@ -8,6 +8,8 @@
 #include "psammite.h"
 #include "asm_macros.h"
 
+extern int failed_tests;
+
 #define VM_EXPECT(condition)                                                  \
   do                                                                          \
   {                                                                           \
@@ -19,3 +21,4 @@
       failed_tests++;                                                         \
     }                                                                         \
   } while (0)
+
