@@ -170,6 +170,7 @@ And, polishing has been an important focus too, this are some things I worked on
 * More descriptive error codes
 * Tests were revamped twice to organize them in separate files and to run all tests without stopping at the first failure
 * The float dump function now also prints the raw bits for better debugging
+* Minimum memory has been bumped to 1 MB to prevent overflows on medium sized programs
 * Formatting and code consistency improvements
 
 Now, only I/O is missing, and to be honest, my original idea was to write a writechar, writeint, and writefloat set of instructions with read counterparts and be done. However I started reading about MMIO, and I decided to give the VM better capabilities so it can handle more kinds of input and output. I would like giving the vm limited optional http request capabilities via MMIO, and also simple rendering. I would like to make it theoretically possible to write a simple game with real time input in Psammite. I am aware this could be scope creep, but I have loved developing the VM, and I'd prefer Psammite to have more capabilities so better programs can be written for it. Psammite is, foremost, a VM written so I can better learn about hardware and low level coding.
