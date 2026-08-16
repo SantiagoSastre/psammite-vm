@@ -153,6 +153,48 @@ I spent a lot of time refactoring the project and I believe it is much more robu
 
 I have deepened my understanding of bitwise operations, VM design tradeoffs between code density and speed, some coding practices I did not know. And tbh, while I pick up programming languages pretty quickly, I wasn't really proficient in C at the beginning, I only knew the basic syntax; My comfort languages were Python, Javascript, C#, and now I feel much more at ease working in C. I have done several mistakes designing Psammite, for example, not being consistent with instruction names; and it is in no way perfect or designed to replace serious projects. And something that surprised me is that I also learnt how malicious actors use overflows to exploit VMs and measures to prevent it, which I promptly implemented for Psammite. I am deeply grateful for having the time to develop Psammite and learn in a way it's so enjoyable, and I will not stop here, I will continue learning and growing.
 
-After the last update, I started researching more other architectures and VMs, I read the RISC-V specification, to better understand the tradeoffs and decisions made in production grade projects. I did this so I can make more informed decisions, engineer and deliver a good quality project I can be proud of.
+After the last update, I started researching more other architectures and VMs; I read the RISC-V specification, to better understand the tradeoffs and decisions made in production grade projects. I did this so I can make more informed decisions, engineer and deliver a good quality project I can be proud of.
 
 The next steps are floats, those 32 registers are finally getting used, and I/O and then I will start work in the assembler. Expect those final features soon!!
+
+## [16/8/26] Floats are finally here! and future development
+
+Hey, I'm back! 
+These last weeks have been a little hectic because I'm back at my uni and I am preparing for a couple exams; however, I kept working slow and steady on Psammite.
+
+When I dove into floats, I was suprised by their relative complexity, for example, subnormal floats took me by surprise, so I had to read a bit to understand better how they work. My inital plan was to write float addition, substraction, multiplication, division, square roots, and float comparisons. Nevertheless, I ended up adding more instructions like sign injection, and a classify instruction. Why? well, I was reading the rationale of the RISCV float instructions, because I'm not super familiar with the internals of floats, and I realized sign injection is useful because it doesnt change the magnitude at all, and a bit later, I recognized that having the ability to distinguish numbers in categories like NANs, subnormals, and positive/negative would be nice, because it allows developers to check easily if a float is any specific category. I followed RISC-V a lot, but I didn't blindly copy their spec. I decided signalling NANs, and quiet NANs will be treated the same in Psammite, meaning that the classify instruction makes no difference between them. Also, I ended up not using fused float arithmetic, because they can be derived from simpler instructions and I don't want to complicate the decode with more instruction formats. Other than that, the instructions are pretty similar to RISC-V, not because I want to follow them blindly, but because I researched their rationale and I largely agreed except in some tiny areas.
+
+I took longer than expected working with all the rounding modes and bit manipulation. Honestly, even low level programming languages do a good job abstracting what a float is in bits, how they work, and how they are rounded back to ints. I was astounded when I discovered the reason floats aren't fully accurate is because some decimal numbers can't be fully represented in float binary. After all this, Psammite now has full float support, all arithmetic, comparison, and sign injections are working properly, I can't overstate my excitement, working on this project has been a dream for me, I have had a lot of fun, and I have been able to dive deeper into the lower levels of computing and programming.
+
+And, polishing has been an important focus too, this are some things I worked on:
+* More descriptive error codes
+* Tests were revamped twice to organize them in separate files and to run all tests without stopping at the first failure
+* The float dump function now also prints the raw bits for better debugging
+* Minimum memory has been bumped to 1 MB to prevent overflows on medium sized programs
+* Formatting and code consistency improvements
+
+Now, only I/O is missing, and to be honest, my original idea was to write a writechar, writeint, and writefloat set of instructions with read counterparts and be done. However I started reading about MMIO, and I decided to give the VM better capabilities so it can handle more kinds of input and output. I would like giving the vm limited optional http request capabilities via MMIO, and also simple rendering. I would like to make it theoretically possible to write a simple game with real time input in Psammite. I am aware this could be scope creep, but I have loved developing the VM, and I'd prefer Psammite to have more capabilities so better programs can be written for it. Psammite is, foremost, a VM written so I can better learn about hardware and low level coding.
+
+Why MMIO and not dedicated instructions? Because memory access instructions can be reused, keeping code versatile, simpler and easier to understand.
+
+So... what are the next steps or timelines?
+
+I'm not fully sure how long it will take, but first I will investigate more about VM architecture, I will revamp memory (again) most likely with pages and pointers, then I will add some basic devices. I still haven't decided which ones I would include, but at least a keyboard and a mouse. Then the project will continue as originally planned, with the assembler and a programming language. BTW, I wrote a simple program which calculates Fibonnacci numbers, and while it's simple it's so rewarding to see it run on my own machine. here it is if you want to take a look:
+
+```
+uint8_t program[] = {
+    ASM_LI(R4, 1),
+    ASM_LI(R5, 0),
+    ASM_LI(R6, 93),
+    ASM_BGT(R6, R4, 8),
+    ASM_MOV(R6,R4),
+    ASM_J(24),
+    ASM_ADDI(R6,R6,-1),
+    ASM_ADD(R4,R5, R7),
+    ASM_MOV(R4, R5),
+    ASM_MOV(R7, R4),
+    ASM_ADDI(R6, R6, -1),
+    ASM_BNEZ(R6, -20),
+    ASM_HALT};
+```
+It gets the 93rd term of the sequence, however it can't be printed yet... so stay tuned for that.

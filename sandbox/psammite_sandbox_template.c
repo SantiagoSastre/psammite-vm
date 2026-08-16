@@ -3,13 +3,12 @@
 
 // Copy this file into a new file called psammite_sandbox.c
 
-
 // Write your program here.
 uint8_t program[] = {
-    ASM_HALT
-};
+    ASM_HALT};
 
-int main() {
+int main()
+{
   PsammiteVM vm = {0};
   psammite_init(&vm, PSAMMITE_MIN_MEM_SIZE);
 

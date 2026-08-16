@@ -1,14 +1,11 @@
-#ifndef PSAMMITE_HEADER
-#define PSAMMITE_HEADER
-
+#pragma once
 
 // Psammite uses arithmetic right shift for sign-extending immediate offsets.
 #if ((-1 >> 1) != -1)
-# error Psammite requires arithmetic right shift on signed integers
+#error Psammite requires arithmetic right shift on signed integers
 #endif
 
 #include "core.h"
-#include "status_codes.h"
 #include "opcodes.h"
 #include "execute/execute_router.h"
 #include "load_store.h"
@@ -16,46 +13,32 @@
 #include "branch.h"
 #include "immediate.h"
 
-
-
-
-
-
-
-
-
-
 int psammite_reset(PsammiteVM *vm);
 int psammite_init(PsammiteVM *vm, size_t memory_size);
 void psammite_free_memory(PsammiteVM *vm);
 int psammite_load_program(PsammiteVM *vm, uint8_t *program, size_t program_size);
 void psammite_dump(PsammiteVM *vm);
-void psammite_print_registers(PsammiteVM *vm);
-void psammite_print_f_registers(PsammiteVM *vm);
-void psammite_print_memory_window(PsammiteVM *vm);
+PsammiteStatusCodes psammite_get_panic_motive(const PsammiteVM *vm);
+PsammiteVMState psammite_get_status(const PsammiteVM *vm);
 int psammite_run(PsammiteVM *vm);
 
-
-
-
-
-
-
-
-
-
-
-static inline PsammiteStatusCodes psammite_step(PsammiteVM *vm) {
-    PsammiteStatusCodes code;
-  if (psammite_fetch_to_ir(vm)!=0) {
-    return VM_ERR_GENERIC;
-  }
-  uint32_t instruction = vm->ir;
-  uint8_t opcode = psammite_decode_opcode(instruction);
-  switch (opcode) {
+static inline PsammiteVMState psammite_step(PsammiteVM *vm)
+{
+    PsammiteStatusCodes code = VM_OK;
+    code = psammite_fetch_to_ir(vm);
+    if (code != VM_OK)
+    {
+        vm->_status = VM_STATE_PANIC;
+        vm->_panic_motive = code;
+        return vm->_status;
+    }
+    uint32_t instruction = vm->_ir;
+    uint8_t opcode = psammite_decode_opcode(instruction);
+    switch (opcode)
+    {
     case EXECUTE:
-      code = psammite_route_execute(vm, instruction);
-      break;
+        code = psammite_route_execute(vm, instruction);
+        break;
     case AC:
         code = psammite_ac(vm, instruction);
         break;
@@ -140,13 +123,20 @@ static inline PsammiteStatusCodes psammite_step(PsammiteVM *vm) {
     case SBGE:
         code = psammite_sbge(vm, instruction);
         break;
+    case LF64:
+        code = psammite_lf64(vm, instruction);
+        break;
+    case SF64:
+        code = psammite_sf64(vm, instruction);
+        break;
     default:
-      fprintf(stderr, "Unrecognized Opcode, halting.\n");
-      code = VM_ERR_GENERIC;
-      break;
-  }
-  return code;
+        code = VM_ERROR_UNRECOGNIZED;
+        break;
+    }
+    if (code != VM_OK)
+    {
+        vm->_status = VM_STATE_PANIC;
+        vm->_panic_motive = code;
+    }
+    return vm->_status;
 }
-
-
-#endif
