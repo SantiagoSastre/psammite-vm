@@ -179,7 +179,7 @@ Why MMIO and not dedicated instructions? Because memory access instructions can 
 
 So... what are the next steps or timelines?
 
-I'm not fully sure how long it will take, but first I will investigate more about VM architecture, I will revamp memory (again) most likely with pages and pointers, then I will add some basic devices. I still haven't decided which ones I would include, but at least a keyboard and a mouse. Then the project will continue as originally planned, with the assembler and a programming language. BTW, I wrote a simple program which calculates Fibonnacci numbers, and while it's simple it's so rewarding to see it run on my own machine. here it is if you want to take a look:
+I'm not fully sure how long it will take, but first I will investigate more about VM architecture, I will revamp memory (again) most likely with pages and pointers, then I will add some basic devices. I still haven't decided which ones I will include, but at least a keyboard and a mouse. Then the project will continue as originally planned, with the assembler and a programming language. BTW, I wrote a simple program which calculates Fibonnacci numbers, and while it's simple it's so rewarding to see it run on my own machine. here it is if you want to take a look:
 
 ```
 uint8_t program[] = {
