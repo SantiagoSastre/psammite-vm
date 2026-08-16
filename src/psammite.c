@@ -90,13 +90,14 @@ static void psammite_print_f_registers(PsammiteVM *vm)
 
   for (PsammiteFRegister i = FR0; i < NUM_REGISTER; i++)
   {
-    if (i % 4 == 0 && i != FR0)
+    if (i % 2 == 0 && i != FR0)
     {
       printf("\n");
     }
     char reg_name[5];
     snprintf(reg_name, sizeof(reg_name), "FR%02d", i);
-    printf("%-4s: %018.6lf    |    ", reg_name, psammite_read_f_register(vm, i).f64);
+    printf("%-4s: %018.6lf         ", reg_name, psammite_read_f_register(vm, i).f64);
+    printf("BITS: 0x%016" PRIX64 "    |    ", psammite_read_f_register(vm, i).bits);
   }
   printf("\n");
 }
